@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
+import { Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -14,6 +15,14 @@ async function bootstrap() {
     .build();
   app.setGlobalPrefix('api');
 
+  app.connectMicroservice({
+    transport: Transport.REDIS,
+    options: {
+      host: configService.get<string>('REDIS_HOST'),
+      port: configService.get<number>('REDIS_PORT'),
+      password: configService.get<string>('REDIS_PASSWORD'),
+    },
+  });
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

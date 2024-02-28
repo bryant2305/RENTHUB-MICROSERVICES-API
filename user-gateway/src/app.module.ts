@@ -17,9 +17,19 @@ import { AuthModule } from './auth/auth.module';
         configService.get('typeorm'),
     }),
     UserModule,
-    AuthModule
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  static redisHost: string;
+  static redisPort: number;
+  static redisPassword: string;
+
+  constructor(private readonly configService: ConfigService) {
+    AppModule.redisHost = this.configService.get<string>('REDIS_HOST');
+    AppModule.redisPort = this.configService.get<number>('REDIS_PORT');
+    AppModule.redisPassword = this.configService.get<string>('REDIS_PASSWORD');
+  }
+}
