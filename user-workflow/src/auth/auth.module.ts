@@ -6,10 +6,13 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
 import { Services } from 'src/common/enums/services.enum';
 import { User } from 'src/user/entities/user.entity';
+import { AuthGuard } from './auth-guard-token';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
+    UserModule,
     ClientsModule.registerAsync([
       {
         name: Services.auth,
@@ -29,6 +32,6 @@ import { User } from 'src/user/entities/user.entity';
     ]),
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, AuthGuard],
 })
 export class AuthModule {}

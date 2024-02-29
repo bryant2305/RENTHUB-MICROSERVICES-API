@@ -5,7 +5,6 @@ import {
   BadRequestException,
   Inject,
 } from '@nestjs/common';
-import { UserService } from 'src/user/user.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { AuthGuard } from './auth-guard-token';

@@ -8,20 +8,20 @@ import { UpdateUserDto } from './dto/update-user.dto';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @MessagePattern('createUser')
-  create(@Payload() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
-  }
+  // @MessagePattern('createUser')
+  // create(@Payload() createUserDto: CreateUserDto) {
+  //   return this.userService.create(createUserDto);
+  // }
 
   @MessagePattern('findAllUser')
   findAll() {
     return this.userService.findAll();
   }
 
-  @MessagePattern('findOneUser')
-  findOne(@Payload() id: number) {
-    return this.userService.findOne(id);
-  }
+  // @MessagePattern('findOneUser')
+  // findOne(@Payload() id: number) {
+  //   return this.userService.findOne(id);
+  // }
 
   @MessagePattern('updateUser')
   update(@Payload() updateUserDto: UpdateUserDto) {

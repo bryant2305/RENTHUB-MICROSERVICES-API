@@ -4,8 +4,6 @@ import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import typeorm from './config/typeorm';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './user/entities/user.entity';
-import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 
 @Module({
@@ -16,7 +14,6 @@ import { AuthModule } from './auth/auth.module';
       useFactory: async (configService: ConfigService) =>
         configService.get('typeorm'),
     }),
-    UserModule,
     AuthModule,
   ],
   controllers: [AppController],
