@@ -1,13 +1,15 @@
 import { Module } from '@nestjs/common';
-import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { AuthGuard } from './auth-guard-token';
+import { AuthController } from './auth.controller';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
 import { Services } from 'src/common/enums/services.enum';
+import { User } from 'src/user/entities/user.entity';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([User]),
     ClientsModule.registerAsync([
       {
         name: Services.auth,
@@ -27,6 +29,6 @@ import { Services } from 'src/common/enums/services.enum';
     ]),
   ],
   controllers: [AuthController],
-  providers: [AuthService, AuthGuard],
+  providers: [AuthService],
 })
 export class AuthModule {}
