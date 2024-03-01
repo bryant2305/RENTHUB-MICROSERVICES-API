@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import { Transport } from '@nestjs/microservices';
@@ -35,4 +35,6 @@ async function bootstrap() {
 
   await app.listen(configService.get<number>('PORT') || 0);
 }
-bootstrap();
+bootstrap().then(() => {
+  Logger.log('Application is up and running 🚀');
+});

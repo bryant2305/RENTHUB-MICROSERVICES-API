@@ -1,7 +1,12 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
 import { UserService } from 'src/user/user.service';
 import { AuthGuard } from './auth-guard-token';
+import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
@@ -26,6 +31,25 @@ export class AuthService {
 
     const token = this.authGuard.generateToken(newUser.id, newUser.email);
     return { user: newUser, token };
+  }
+  async login(loginDto: LoginDto) {
+    const { email, password } = loginDto;
+
+    const user = await this.userService.findOneByEmail(email);
+    if (!user) {
+      throw new BadRequestException("User doesn't exist");
+    }
+
+    const isPasswordValid = await this.userService.comparePasswords(
+      password,
+      user.password,
+    );
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const token = this.authGuard.generateToken(user.id, user.email);
+    return { token };
   }
 
   findAll() {

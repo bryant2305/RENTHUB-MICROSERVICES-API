@@ -1,3 +1,5 @@
+// auth.module.ts (Microservicio Principal)
+
 import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -10,14 +12,14 @@ import { Services } from 'src/common/enums/services.enum';
   imports: [
     ClientsModule.registerAsync([
       {
-        name: Services.auth,
+        name: Services.AUTH,
         inject: [ConfigService],
         useFactory: async (configService: ConfigService) => ({
           transport: Transport.REDIS,
           options: {
             host: configService.get('REDIS_HOST'),
             port: parseInt(configService.get('REDIS_PORT')),
-            password: configService.get('REDIS_PASSWORD'),
+          //  password: configService.get('REDIS_PASSWORD'),
             retryAttempts: 5,
             retryDelay: 10000,
             keepAlive: 10000,

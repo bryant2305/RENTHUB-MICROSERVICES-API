@@ -1,3 +1,3 @@
 export enum Services {
-  auth = 'auth',
+  AUTH = 'AUTH',
 }
