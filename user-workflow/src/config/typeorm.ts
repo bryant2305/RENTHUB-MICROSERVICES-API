@@ -1,8 +1,6 @@
-import { config as dotenvConfig } from 'dotenv';
-//import InitSeeder from '../database/seeds/init.seeder';
-import { DataSource, DataSourceOptions } from 'typeorm';
-//import { SeederOptions } from 'typeorm-extension';
 import { registerAs } from '@nestjs/config';
+import { config as dotenvConfig } from 'dotenv';
+import { DataSource, DataSourceOptions } from 'typeorm';
 
 dotenvConfig({ path: '.env' });
 
@@ -14,7 +12,7 @@ const config = {
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
   autoLoadEntities: true,
-  synchronize: process.env.NODE_ENV == 'local',
+  synchronize: process.env.NODE_ENV == 'local' ? true : false,
   logging: true,
   entities: ['./dist/**/*.entity{.ts,.js}'],
   migrations: ['./dist/database/migrations/*.{ts,js}'],
@@ -27,4 +25,3 @@ const config = {
 
 export default registerAs('typeorm', () => config);
 export const connectionSource = new DataSource(config as DataSourceOptions);
-// & SeederOptions

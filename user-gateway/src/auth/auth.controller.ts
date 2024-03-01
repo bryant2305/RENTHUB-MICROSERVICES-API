@@ -13,13 +13,13 @@ export class AuthController {
   @ApiOperation({ summary: 'login' })
   @ApiResponse({ status: 201, description: 'logeado!' })
   login(@Body() loginDto: LoginDto) {
-    return this.authService.login(loginDto);
+    return this.authService.sendLoginRequest(loginDto);
   }
 
   @Post('register')
   @ApiOperation({ summary: 'register' })
   @ApiResponse({ status: 201, description: 'registrado!' })
   register(@Body() registerDto: RegisterDto) {
-    return this.authService.register(registerDto);
+    return this.authService.sendRegisterRequest(registerDto);
   }
 }
