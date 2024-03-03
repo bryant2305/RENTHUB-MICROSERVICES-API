@@ -1,7 +1,7 @@
 # compiled output
 /dist
 /node_modules
-/build
+/docs/*.json
 
 # Logs
 logs
@@ -14,6 +14,7 @@ lerna-debug.log*
 
 # OS
 .DS_Store
+*.env
 
 # Tests
 /coverage
@@ -34,23 +35,3 @@ lerna-debug.log*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-
-# dotenv environment variable files
-.env
-.env.development.local
-.env.test.local
-.env.production.local
-.env.local
-
-# temp directory
-.temp
-.tmp
-
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Diagnostic reports (https://nodejs.org/api/report.html)
-report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
