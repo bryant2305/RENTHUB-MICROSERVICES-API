@@ -1,15 +1,12 @@
-import { Module } from '@nestjs/common';
-import { UserService } from './user.service';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserController } from './user.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
-import { ClientsModule, Transport } from '@nestjs/microservices';
+import { UserService } from './user.service';
 import { Services } from 'src/common/enums/services.enum';
-import { ConfigService } from '@nestjs/config';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { Module } from '@nestjs/common';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
     ClientsModule.registerAsync([
       {
         name: Services.USERS,
@@ -19,7 +16,6 @@ import { ConfigService } from '@nestjs/config';
           options: {
             host: configService.get('REDIS_HOST'),
             port: parseInt(configService.get('REDIS_PORT')),
-            password: configService.get('REDIS_PASSWORD'),
             retryAttempts: 5,
             retryDelay: 10000,
             keepAlive: 10000,
@@ -27,9 +23,9 @@ import { ConfigService } from '@nestjs/config';
         }),
       },
     ]),
+    ConfigModule, // Agrega ConfigModule a los imports
   ],
   controllers: [UserController],
   providers: [UserService],
-  exports: [TypeOrmModule, UserService],
 })
 export class UserModule {}
