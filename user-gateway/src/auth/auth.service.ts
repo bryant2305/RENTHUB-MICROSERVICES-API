@@ -9,6 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import { EventCommands } from 'src/common/enums/event-commands.enum';
 import { catchError, timeout } from 'rxjs';
 import { LoginDto } from './dto/login.dto';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class AuthService {

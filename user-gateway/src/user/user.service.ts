@@ -9,7 +9,7 @@ import { catchError, timeout } from 'rxjs';
 @Injectable()
 export class UserService {
   constructor(
-    @Inject(Services.USERS)
+    @Inject(Services.AUTH)
     private readonly clientService: ClientProxy,
     private readonly configService: ConfigService,
   ) {}
@@ -26,4 +26,5 @@ export class UserService {
         }),
       );
   }
+
 }

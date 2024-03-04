@@ -9,8 +9,9 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
   const config = new DocumentBuilder()
+    .addBearerAuth()
     .setTitle('AuthWithMicroServices')
-    .setDescription('AuthWithMicroServices')
+    .setDescription('Auth with microservice implementation')
     .setVersion('1.0')
     .build();
   app.setGlobalPrefix('api');
