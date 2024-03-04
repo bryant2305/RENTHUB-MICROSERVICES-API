@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { Services } from 'src/common/enums/services.enum';
 import { EventCommands } from 'src/common/enums/event-commands.enum';
 import { catchError, timeout } from 'rxjs';
+import { UserDto } from './dto/user.dto';
 
 @Injectable()
 export class UserService {
@@ -14,7 +15,7 @@ export class UserService {
     private readonly configService: ConfigService,
   ) {}
   findAll() {
-    console.log('Sending login request with data:');
+    console.log('Sending getAll request with data:');
 
     return this.clientService
       .send(EventCommands.GET_USERS, {})
@@ -26,5 +27,17 @@ export class UserService {
         }),
       );
   }
+  findOneUser(email: string) {
+    console.log('Sending finOne request with data:');
 
+    return this.clientService
+      .send(EventCommands.FIND_USER, email)
+      .pipe(timeout(82000))
+      .pipe(
+        catchError((error) => {
+          console.error('Error in getUsersdata:', error);
+          throw new RpcException(error);
+        }),
+      );
+  }
 }
