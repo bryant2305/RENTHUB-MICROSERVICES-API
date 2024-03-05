@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Controller, UseGuards } from '@nestjs/common';
 import { EventPattern } from '@nestjs/microservices';
 import { UserService } from './user.service';
 import { EventCommands } from 'src/common/event-commands.enum';

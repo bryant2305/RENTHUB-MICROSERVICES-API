@@ -5,16 +5,11 @@ import {
 } from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
 import { UserService } from 'src/user/user.service';
-import { AuthGuard } from './auth-guard-token';
 import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private readonly userService: UserService,
-
-    private readonly authGuard: AuthGuard,
-  ) {}
+  constructor(private readonly userService: UserService) {}
   async register(registerDto: RegisterDto) {
     const { email, password } = registerDto;
 
@@ -29,8 +24,7 @@ export class AuthService {
       password: hashedPassword,
     });
 
-    const token = this.authGuard.generateToken(newUser.id, newUser.email);
-    return { user: newUser, token };
+    return { user: newUser };
   }
   async login(loginDto: LoginDto) {
     const { email, password } = loginDto;
@@ -48,8 +42,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const token = this.authGuard.generateToken(user.id, user.email);
-    return { token };
+    return user;
   }
 
   findAll() {

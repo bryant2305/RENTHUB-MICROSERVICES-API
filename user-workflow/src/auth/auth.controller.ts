@@ -5,6 +5,7 @@ import { EventPattern, Payload } from '@nestjs/microservices';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { EventCommands } from 'src/common/event-commands.enum';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller()
 export class AuthController {
