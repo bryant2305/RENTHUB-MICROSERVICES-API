@@ -26,7 +26,6 @@ export class AuthService {
     try {
       const result = await this.sendRegisterRequest(data).toPromise();
 
-      // Aquí puedes generar el token después del registro exitoso
       const token = this.authGuard.generateToken(
         result.user.id,
         result.user.email,
@@ -43,10 +42,8 @@ export class AuthService {
     try {
       const result = await this.sendLoginRequest(data).toPromise();
 
-      // Validar el usuario usando AuthGuard
       const user = await this.jwtStrategy.validate({ email: data.email });
 
-      // Aquí puedes generar el token después del inicio de sesión exitoso
       const token = this.authGuard.generateToken(user.id, user.email);
 
       return { user, token };

@@ -39,9 +39,8 @@ import { AuthGuard } from './auth-guard-token';
       }),
       inject: [ConfigService],
     }),
-    
   ],
   controllers: [AuthController],
-  providers: [AuthService, UserService, JwtStrategy , AuthGuard],
+  providers: [AuthService, UserService, JwtStrategy, AuthGuard],
 })
 export class AuthModule {}
