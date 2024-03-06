@@ -1,5 +1,6 @@
 export enum EventCommands {
   SEND_REGISTER = 'SEND_REGISTER',
   SEND_LOGIN = 'SEND_LOGIN',
+  FIND_USER = 'FIND_USER',
   GET_USERS = 'GET_USERS',
 }

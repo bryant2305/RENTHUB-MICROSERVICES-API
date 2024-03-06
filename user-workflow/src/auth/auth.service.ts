@@ -5,32 +5,36 @@ import {
 } from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
 import { UserService } from 'src/user/user.service';
-import { AuthGuard } from './auth-guard-token';
 import { LoginDto } from './dto/login.dto';
+import { EmailService } from 'src/email/email.service';
+import { catchError } from 'rxjs';
+import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UserService,
-
-    private readonly authGuard: AuthGuard,
+    private readonly emailService: EmailService,
   ) {}
   async register(registerDto: RegisterDto) {
-    const { email, password } = registerDto;
+    try {
+      const { email, password } = registerDto;
 
-    const existingUser = await this.userService.findOneByEmail(email);
-    if (existingUser) {
-      throw new BadRequestException('User already exists');
+      const existingUser = await this.userService.findOneByEmail(email);
+      if (existingUser) {
+        throw new BadRequestException('User already exists');
+      }
+
+      const hashedPassword = await this.userService.hashPassword(password);
+      const newUser = await this.userService.createUser({
+        ...registerDto,
+        password: hashedPassword,
+      });
+      await this.emailService.sendUserConfirmation(newUser.email, newUser.name);
+      return { user: newUser };
+    } catch (error) {
+      throw new RpcException(error);
     }
-
-    const hashedPassword = await this.userService.hashPassword(password);
-    const newUser = await this.userService.createUser({
-      ...registerDto,
-      password: hashedPassword,
-    });
-
-    const token = this.authGuard.generateToken(newUser.id, newUser.email);
-    return { user: newUser, token };
   }
   async login(loginDto: LoginDto) {
     const { email, password } = loginDto;
@@ -48,8 +52,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const token = this.authGuard.generateToken(user.id, user.email);
-    return { token };
+    return user;
   }
 
   findAll() {

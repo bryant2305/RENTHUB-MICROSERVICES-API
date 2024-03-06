@@ -12,7 +12,7 @@ import { ConfigService } from '@nestjs/config';
     TypeOrmModule.forFeature([User]),
     ClientsModule.registerAsync([
       {
-        name: Services.USERS,
+        name: Services.AUTH,
         inject: [ConfigService],
         useFactory: async (configService: ConfigService) => ({
           transport: Transport.REDIS,

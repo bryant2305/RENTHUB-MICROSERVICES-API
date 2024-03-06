@@ -9,7 +9,7 @@ import { Module } from '@nestjs/common';
   imports: [
     ClientsModule.registerAsync([
       {
-        name: Services.USERS,
+        name: Services.AUTH,
         inject: [ConfigService],
         useFactory: async (configService: ConfigService) => ({
           transport: Transport.REDIS,
@@ -27,5 +27,6 @@ import { Module } from '@nestjs/common';
   ],
   controllers: [UserController],
   providers: [UserService],
+  exports: [UserService],
 })
 export class UserModule {}

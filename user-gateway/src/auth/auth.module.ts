@@ -1,12 +1,16 @@
-// auth.module.ts (Microservicio Principal)
-
+// auth.module.ts
 import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { AuthGuard } from './auth-guard-token';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Services } from 'src/common/enums/services.enum';
+import { JwtModule } from '@nestjs/jwt';
+import { UserService } from 'src/user/user.service';
+import { UserModule } from 'src/user/user.module';
+import { PassportModule } from '@nestjs/passport';
+import { JwtStrategy } from './jwt.strategy';
+import { AuthGuard } from './auth-guard-token';
 
 @Module({
   imports: [
@@ -19,7 +23,6 @@ import { Services } from 'src/common/enums/services.enum';
           options: {
             host: configService.get('REDIS_HOST'),
             port: parseInt(configService.get('REDIS_PORT')),
-          //  password: configService.get('REDIS_PASSWORD'),
             retryAttempts: 5,
             retryDelay: 10000,
             keepAlive: 10000,
@@ -27,8 +30,17 @@ import { Services } from 'src/common/enums/services.enum';
         }),
       },
     ]),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get('JWT_SECRET_KEY'),
+        signOptions: { expiresIn: '1h' },
+      }),
+      inject: [ConfigService],
+    }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, AuthGuard],
+  providers: [AuthService, UserService, JwtStrategy, AuthGuard],
 })
 export class AuthModule {}
