@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 // ...
 
+// EmailService
+
 @Injectable()
 export class EmailService {
   constructor(private readonly mailerService: MailerService) {}
@@ -11,7 +13,7 @@ export class EmailService {
       await this.mailerService.sendMail({
         to: email,
         subject: 'Welcome to my ApiWithMicroservice App!',
-        template: './confirmation',  // Cambiado a 'confirmation'
+        template: './welcome',
         context: {
           name: `${name}`,
           email: `${email}`,
