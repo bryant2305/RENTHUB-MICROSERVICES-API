@@ -6,25 +6,35 @@ import {
 import { RegisterDto } from './dto/register.dto';
 import { UserService } from 'src/user/user.service';
 import { LoginDto } from './dto/login.dto';
+import { EmailService } from 'src/email/email.service';
+import { catchError } from 'rxjs';
+import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly emailService: EmailService,
+  ) {}
   async register(registerDto: RegisterDto) {
-    const { email, password } = registerDto;
+    try {
+      const { email, password } = registerDto;
 
-    const existingUser = await this.userService.findOneByEmail(email);
-    if (existingUser) {
-      throw new BadRequestException('User already exists');
+      const existingUser = await this.userService.findOneByEmail(email);
+      if (existingUser) {
+        throw new BadRequestException('User already exists');
+      }
+
+      const hashedPassword = await this.userService.hashPassword(password);
+      const newUser = await this.userService.createUser({
+        ...registerDto,
+        password: hashedPassword,
+      });
+      await this.emailService.sendUserConfirmation(newUser.email, newUser.name);
+      return { user: newUser };
+    } catch (error) {
+      throw new RpcException(error);
     }
-
-    const hashedPassword = await this.userService.hashPassword(password);
-    const newUser = await this.userService.createUser({
-      ...registerDto,
-      password: hashedPassword,
-    });
-
-    return { user: newUser };
   }
   async login(loginDto: LoginDto) {
     const { email, password } = loginDto;
