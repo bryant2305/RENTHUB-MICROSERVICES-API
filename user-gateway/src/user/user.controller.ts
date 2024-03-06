@@ -19,6 +19,8 @@ export class UserController {
   }
   @Get(':email')
   @ApiOperation({ summary: 'find a user' })
+  @ApiBearerAuth()
+  @UseGuards(JwtGuard)
   getUser(@Param('email') email: string) {
     // Puedes construir tu objeto UserDto si es necesario
     return this.userService.findOneUser(email);
