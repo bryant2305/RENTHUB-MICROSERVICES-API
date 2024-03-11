@@ -22,7 +22,10 @@ export class AuthService {
 
       const existingUser = await this.userService.findOneByEmail(email);
       if (existingUser) {
-        throw new BadRequestException('User already exists');
+        throw new RpcException({
+          status: 400,
+          message: ' user already exist',
+        });
       }
 
       const hashedPassword = await this.userService.hashPassword(password);
@@ -41,15 +44,20 @@ export class AuthService {
 
     const user = await this.userService.findOneByEmail(email);
     if (!user) {
-      throw new BadRequestException("User doesn't exist");
+      throw new RpcException({
+        status: 400,
+        message: ' usuario no encontrado',
+      });
     }
-
     const isPasswordValid = await this.userService.comparePasswords(
       password,
       user.password,
     );
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new RpcException({
+        status: 400,
+        message: 'Usuario no encontrado', // Corregido de "messague" a "message"
+      });
     }
 
     return user;

@@ -4,7 +4,6 @@ import { ConfigService } from '@nestjs/config';
 import { Transport } from '@nestjs/microservices';
 import { Logger, ValidationPipe } from '@nestjs/common';
 
-
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -18,7 +17,6 @@ async function bootstrap() {
       password: configService.get<string>('REDIS_PASSWORD'),
     },
   });
-
 
   app.useGlobalPipes(
     new ValidationPipe({
