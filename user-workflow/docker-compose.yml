@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  app:
+    image: node:14 
+    container_name: nestjs_app
+    restart: always
+    volumes:
+      - .:/app 
+    working_dir: /app
+    command: npm run start:dev 
+    environment:
+      NODE_ENV: development
+    ports:
+      - "3000:3000"
+
+  db:
+    image: mysql:5.7
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: my_password
+      MYSQL_DATABASE: ${DB_DATABASE}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
