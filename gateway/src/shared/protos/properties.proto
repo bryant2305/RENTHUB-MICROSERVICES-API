@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package properties_proto;
+
+service PropertiesService {
+    rpc create(CreateProperty) returns (PropertyResponse){}
+}
+
+message PropertyById {
+    int32 id = 1 ;
+}
+
+message CreateProperty{
+    string name = 1;
+}
+
+message Property{
+    string name = 1;
+}
+
+message PropertyResponse {
+    bool error =1;
+    string message =2;
+    Property property =3;
+}
