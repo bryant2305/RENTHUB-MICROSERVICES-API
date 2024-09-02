@@ -7,7 +7,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Services } from 'src/common/enums/services.enum';
 import { JwtModule } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
-import { UserModule } from 'src/user/user.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwt.strategy';
 import { AuthGuard } from './auth-guard-token';
