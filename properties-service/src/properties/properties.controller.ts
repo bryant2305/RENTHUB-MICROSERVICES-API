@@ -9,7 +9,7 @@ export class PropertiesController {
 
   @GrpcMethod('PropertiesService', 'create')
   create(@Payload() createPropertyDto: CreatePropertyDto) {
-    console.log("llegue")
+
     return this.propertiesService.create(createPropertyDto);
   }
 }

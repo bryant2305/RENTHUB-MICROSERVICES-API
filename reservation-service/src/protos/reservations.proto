@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package reservations_proto;
+
+service ReservationService {
+    rpc createReservation (CreateReservation) returns (ReservationResponse);
+}
+
+message Reservation {
+    int32  propertyId = 1;
+    int32  userId = 2;
+    string checkIn = 3;
+    string checkOut = 4;
+}
+
+message CreateReservation {
+    int32  propertyId = 1;
+    int32  userId = 2;
+    string checkIn = 3;
+    string checkOut = 4;
+}
+
+message ReservationResponse {
+    bool error = 1;
+    string message = 2;
+    Reservation reservation = 3;
+}
