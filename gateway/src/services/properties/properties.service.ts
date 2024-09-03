@@ -11,7 +11,7 @@ export class PropertiesService {
   ) {
     this.service = this.client.getService('PropertiesService');
   }
-  create(createPropertyDto: CreatePropertyDto) {
-    return this.service.create(createPropertyDto);
+  async create(createPropertyDto: CreatePropertyDto) {
+    return await this.service.create(createPropertyDto);
   }
 }
