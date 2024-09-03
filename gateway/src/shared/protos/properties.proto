@@ -3,23 +3,43 @@ syntax = "proto3";
 package properties_proto;
 
 service PropertiesService {
-    rpc create(CreateProperty) returns (PropertyResponse){}
+    rpc create(CreateProperty) returns (PropertyResponse) {}
 }
 
 message PropertyById {
-    int32 id = 1 ;
+    int32 id = 1;
 }
 
-message CreateProperty{
-    string name = 1;
+message CreateProperty {
+    string title = 1;
+    string description = 2;
+    string address = 3;
+    string propertyType = 4;
+    int32 size = 5;
+    int32 bedrooms = 6;
+    int32 bathrooms = 7;
+    int32 capacity = 8;
+    bool availability = 9;
+    int32 hostId = 10;
+    // string images = 11; // Implementar las imágenes si es necesario
 }
 
-message Property{
-    string name = 1;
+message Property {
+    string title = 1;
+    string description = 2;
+    string address = 3;
+    string propertyType = 4;
+    int32 size = 5;
+    int32 bedrooms = 6;
+    int32 bathrooms = 7;
+    int32 capacity = 8;
+    bool availability = 9;
+    int32 hostId = 10;
+    // string images = 11; // Implementar las imágenes si es necesario
 }
 
 message PropertyResponse {
-    bool error =1;
-    string message =2;
-    Property property =3;
+    bool error = 1;
+    string message = 2;
+    Property property = 3;
 }
