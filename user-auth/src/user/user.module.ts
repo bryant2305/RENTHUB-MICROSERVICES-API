@@ -5,26 +5,28 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { Services } from 'src/common/enums/services.enum';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { join } from 'path';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
     ClientsModule.registerAsync([
       {
-        name: Services.AUTH,
-        inject: [ConfigService],
+        name: 'USER-AUTH',
+        imports: [ConfigModule],
         useFactory: async (configService: ConfigService) => ({
-          transport: Transport.REDIS,
+          transport: Transport.GRPC,
           options: {
-            host: configService.get('REDIS_HOST'),
-            port: parseInt(configService.get('REDIS_PORT')),
-            password: configService.get('REDIS_PASSWORD'),
-            retryAttempts: 5,
-            retryDelay: 10000,
-            keepAlive: 10000,
+            package: 'user_auth_proto',
+            protoPath: join(
+              __dirname,
+              '../../src/shared/protos/user-auth.proto',
+            ),
+            url: configService.get('USER-AUTH_URL'),
           },
         }),
+        inject: [ConfigService],
       },
     ]),
   ],

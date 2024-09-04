@@ -21,10 +21,13 @@ export class UserService {
     return this.userRepository.find();
   }
 
-  findOneByEmail(email: string) {
+  async findOneByEmail(email: string): Promise<User> {
     return this.userRepository.findOneBy({ email });
   }
 
+  findOneById(id: number) {
+    return this.userRepository.findOneBy({ id });
+  }
   async comparePasswords(
     plainTextPassword: string,
     hashedPassword: string,
