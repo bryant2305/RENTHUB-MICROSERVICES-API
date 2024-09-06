@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ClientProxy, RpcException } from '@nestjs/microservices';
+import { ClientGrpc, ClientProxy, RpcException } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
 import { Services } from 'src/common/enums/services.enum';
 import { EventCommands } from 'src/common/enums/event-commands.enum';
@@ -9,35 +9,22 @@ import { UserDto } from './dto/user.dto';
 
 @Injectable()
 export class UserService {
+  private userService: any;
+  private authService: any;
   constructor(
-    @Inject(Services.AUTH)
-    private readonly clientService: ClientProxy,
-    private readonly configService: ConfigService,
-  ) {}
-  findAll() {
-    console.log('Sending getAll request with data:');
-
-    return this.clientService
-      .send(EventCommands.GET_USERS, {})
-      .pipe(timeout(82000))
-      .pipe(
-        catchError((error) => {
-          console.error('Error in getUsersdata:', error);
-          throw new RpcException(error);
-        }),
-      );
+    @Inject('USER-AUTH')
+    private readonly client: ClientGrpc,
+  ) {
+    // this.authService = this.client.getService('AuthService');
+    this.userService = this.client.getService('UserService');
   }
-  findOneUser(email: string) {
-    console.log('Sending finOne request with data:');
+  findAll() {}
 
-    return this.clientService
-      .send(EventCommands.FIND_USER, email)
-      .pipe(timeout(82000))
-      .pipe(
-        catchError((error) => {
-          console.error('Error in getUsersdata:', error);
-          throw new RpcException(error);
-        }),
-      );
+  findOneUserById(id: number) {
+    return this.userService.getUserById({ id });
+  }
+
+  findOneUserByEmail(email: string) {
+    return this.userService.getUserByEmail({ email });
   }
 }

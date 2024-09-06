@@ -10,23 +10,26 @@ import { UserService } from 'src/user/user.service';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwt.strategy';
 import { AuthGuard } from './auth-guard-token';
+import { join } from 'path';
 
 @Module({
   imports: [
     ClientsModule.registerAsync([
       {
-        name: Services.AUTH,
-        inject: [ConfigService],
+        name: 'USER-AUTH',
+        imports: [ConfigModule],
         useFactory: async (configService: ConfigService) => ({
-          transport: Transport.REDIS,
+          transport: Transport.GRPC,
           options: {
-            host: configService.get('REDIS_HOST'),
-            port: parseInt(configService.get('REDIS_PORT')),
-            retryAttempts: 5,
-            retryDelay: 10000,
-            keepAlive: 10000,
+            package: 'user_auth_proto',
+            protoPath: join(
+              __dirname,
+              '../../src/shared/protos/user-auth.proto',
+            ),
+            url: configService.get('USER-AUTH_URL'),
           },
         }),
+        inject: [ConfigService],
       },
     ]),
     PassportModule.register({ defaultStrategy: 'jwt' }),

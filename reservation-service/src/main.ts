@@ -15,7 +15,7 @@ async function bootstrap() {
       package: 'reservations_proto',
       protoPath: join(
         __dirname,
-        '../../reservation-service/src/protos/reservations.proto',
+        '../../reservation-service/src/shared/protos/reservations.proto',
       ),
       url: `${url}:${port}`,
     },

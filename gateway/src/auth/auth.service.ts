@@ -2,29 +2,27 @@
 
 import { Inject, Injectable } from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
-import { Services } from 'src/common/enums/services.enum';
-import { ClientProxy, Payload, RpcException } from '@nestjs/microservices';
-import { ConfigService } from '@nestjs/config';
-import { EventCommands } from 'src/common/enums/event-commands.enum';
-import { catchError, timeout } from 'rxjs';
+import { ClientGrpc, RpcException } from '@nestjs/microservices';
 import { LoginDto } from './dto/login.dto';
-import { UserService } from 'src/user/user.service';
 import { AuthGuard } from './auth-guard-token';
 import { JwtStrategy } from './jwt.strategy';
 
 @Injectable()
 export class AuthService {
+  private authService: any;
+  private userService: any;
   constructor(
-    @Inject(Services.AUTH)
-    private readonly clientService: ClientProxy,
-    private readonly configService: ConfigService,
+    @Inject('USER-AUTH')
+    private readonly client: ClientGrpc,
     private readonly authGuard: AuthGuard,
     private readonly jwtStrategy: JwtStrategy,
-  ) {}
-
+  ) {
+    this.authService = this.client.getService('AuthService');
+    this.userService = this.client.getService('UserService');
+  }
   async register(data: RegisterDto) {
     try {
-      const result = await this.sendRegisterRequest(data).toPromise();
+      const result = await this.userService.register(data).toPromise();
 
       const token = this.authGuard.generateToken(
         result.user.id,
@@ -37,10 +35,9 @@ export class AuthService {
     }
   }
 
-  // auth.controller.ts
-  async login(@Payload() data: LoginDto) {
+  async login(data: LoginDto) {
     try {
-      const result = await this.sendLoginRequest(data).toPromise();
+      // const result = await this.authService.login(data).toPromise();
 
       const user = await this.jwtStrategy.validate({ email: data.email });
 
@@ -50,33 +47,5 @@ export class AuthService {
     } catch (error) {
       throw new RpcException(error);
     }
-  }
-
-  sendRegisterRequest(data: RegisterDto) {
-    console.log('Sending register request with data:', data);
-
-    return this.clientService
-      .send(EventCommands.SEND_REGISTER, data)
-      .pipe(timeout(82000))
-      .pipe(
-        catchError((error) => {
-          console.error('Error in sendRegisterRequest:', error);
-          throw new RpcException(error);
-        }),
-      );
-  }
-
-  sendLoginRequest(data: LoginDto) {
-    console.log('Sending login request with data:', data);
-
-    return this.clientService
-      .send(EventCommands.SEND_LOGIN, data)
-      .pipe(timeout(82000))
-      .pipe(
-        catchError((error) => {
-          console.error('Error in sendLoginRequest:', error);
-          throw new RpcException(error);
-        }),
-      );
   }
 }

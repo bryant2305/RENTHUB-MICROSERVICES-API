@@ -10,19 +10,12 @@ import { JwtGuard } from 'src/auth/jwt-auth.guard';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get('users')
-  @ApiOperation({ summary: 'users' })
-  @ApiBearerAuth()
-  @UseGuards(JwtGuard)
-  getAllUsers() {
-    return this.userService.findAll();
-  }
-  @Get(':email')
+  @Get(':id')
   @ApiOperation({ summary: 'find a user' })
   @ApiBearerAuth()
   @UseGuards(JwtGuard)
-  getUser(@Param('email') email: string) {
+  getUser(@Param('id') id: number) {
     // Puedes construir tu objeto UserDto si es necesario
-    return this.userService.findOneUser(email);
+    return this.userService.findOneUserById(id);
   }
 }

@@ -12,12 +12,12 @@ export class CreateReservationDto {
   @IsNumber()
   userId: number;
 
-  @ApiProperty({ example: '2024-09-01T00:00:00.000Z' })
+  @ApiProperty({ example: '2024-09-01' })
   @IsDate()
   @Type(() => Date)
   checkIn: Date;
 
-  @ApiProperty({ example: '2024-09-05T00:00:00.000Z' })
+  @ApiProperty({ example: '2024-09-05' })
   @IsDate()
   @Type(() => Date)
   checkOut: Date;

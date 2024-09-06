@@ -1,19 +1,33 @@
-import { Controller, UseGuards } from '@nestjs/common';
-import { EventPattern } from '@nestjs/microservices';
+import { Controller } from '@nestjs/common';
+import { GrpcMethod, RpcException } from '@nestjs/microservices';
 import { UserService } from './user.service';
-import { EventCommands } from 'src/common/event-commands.enum';
-import { UserDto } from './dto/user.dto';
 
 @Controller()
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @EventPattern(EventCommands.GET_USERS)
-  async Login() {
-    return this.userService.findAll();
+  @GrpcMethod('UserService', 'getUserById')
+  async FindUserById(data: { id: number }) {
+    const user = await this.userService.findOneById(data.id);
+    if (!user) {
+      throw new RpcException(`User with ID ${data.id} not found`);
+    }
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    };
   }
-  @EventPattern(EventCommands.FIND_USER)
-  async FindUser(email: string) {
-    return this.userService.findOneByEmail(email);
+  @GrpcMethod('UserService', 'getUserByEmail')
+  async FindUserByEmail(data: { email: string }) {
+    const user = await this.userService.findOneByEmail(data.email);
+    if (!user) {
+      throw new RpcException('User not found');
+    }
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    };
   }
 }

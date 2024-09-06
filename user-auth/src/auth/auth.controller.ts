@@ -1,21 +1,21 @@
 // auth.controller.ts (Microservicio Secundario)
 
 import { Controller } from '@nestjs/common';
-import { EventPattern, Payload } from '@nestjs/microservices';
+import { EventPattern, GrpcMethod, Payload } from '@nestjs/microservices';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { EventCommands } from 'src/common/event-commands.enum';
-import { AuthGuard } from '@nestjs/passport';
 
 @Controller()
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @EventPattern(EventCommands.SEND_REGISTER)
+  @GrpcMethod('UserService', 'register')
   async Register(@Payload() data: RegisterDto) {
     return this.authService.register(data);
   }
-  @EventPattern(EventCommands.SEND_LOGIN)
+
+  @GrpcMethod('AuthService', 'login')
   async Login(@Payload() data: RegisterDto) {
     return this.authService.login(data);
   }

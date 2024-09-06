@@ -4,26 +4,28 @@ import { UserService } from './user.service';
 import { Services } from 'src/common/enums/services.enum';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { Module } from '@nestjs/common';
+import { join } from 'path';
 
 @Module({
   imports: [
     ClientsModule.registerAsync([
       {
-        name: Services.AUTH,
-        inject: [ConfigService],
+        name: 'USER-AUTH',
+        imports: [ConfigModule],
         useFactory: async (configService: ConfigService) => ({
-          transport: Transport.REDIS,
+          transport: Transport.GRPC,
           options: {
-            host: configService.get('REDIS_HOST'),
-            port: parseInt(configService.get('REDIS_PORT')),
-            retryAttempts: 5,
-            retryDelay: 10000,
-            keepAlive: 10000,
+            package: 'user_auth_proto',
+            protoPath: join(
+              __dirname,
+              '../../src/shared/protos/user-auth.proto',
+            ),
+            url: configService.get('USER-AUTH_URL'),
           },
         }),
+        inject: [ConfigService],
       },
     ]),
-    ConfigModule, // Agrega ConfigModule a los imports
   ],
   controllers: [UserController],
   providers: [UserService],
