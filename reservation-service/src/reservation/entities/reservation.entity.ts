@@ -6,7 +6,7 @@ export class Reservation {
   id: number;
 
   @Column()
-  propertyId: number;
+  propertyId: string;
 
   @Column()
   userId: number;

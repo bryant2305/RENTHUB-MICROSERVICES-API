@@ -9,7 +9,7 @@ export class UtilsService {
   ) {} // Inyecta el repositorio adecuado
 
   async checkPropertyAvailability(
-    propertyId: number,
+    propertyId: string,
     checkIn: Date,
     checkOut: Date,
   ): Promise<boolean> {

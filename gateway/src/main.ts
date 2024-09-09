@@ -12,7 +12,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .addBearerAuth()
     .setTitle('AuthWithMicroServices')
-    .setDescription('Auth with microservice implementation')
+    .setDescription('Api for properties rentals')
     .setVersion('1.0')
     .build();
   app.setGlobalPrefix('api');

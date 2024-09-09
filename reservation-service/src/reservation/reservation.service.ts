@@ -11,6 +11,7 @@ import { UtilsService } from 'src/utils/utils.service';
 @Injectable()
 export class ReservationService {
   private userService: any;
+  private propertyService: any;
   constructor(
     @InjectRepository(Reservation)
     private readonly reservationRepository: Repository<Reservation>,
@@ -19,8 +20,11 @@ export class ReservationService {
     private readonly utilService: UtilsService,
     @Inject('USER-AUTH')
     private readonly userClient: ClientGrpc,
+    @Inject('PROPERTIES')
+    private readonly propertyClient: ClientGrpc,
   ) {
     this.userService = this.userClient.getService('UserService');
+    this.propertyService = this.propertyClient.getService('PropertiesService');
   }
   async create(createReservationDto: CreateReservationDto) {
     try {
@@ -32,7 +36,19 @@ export class ReservationService {
         return {
           error: true,
           message: 'User not found',
-          reservation: null,
+        };
+      }
+
+      const property = await lastValueFrom(
+        this.propertyService.getPropertyById({
+          id: createReservationDto.propertyId,
+        }),
+      );
+
+      if (!property) {
+        return {
+          error: true,
+          message: 'Property not found',
         };
       }
 
