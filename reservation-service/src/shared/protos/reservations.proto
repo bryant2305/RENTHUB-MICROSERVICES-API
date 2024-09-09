@@ -7,14 +7,14 @@ service ReservationService {
 }
 
 message Reservation {
-    int32  propertyId = 1;
+    string  propertyId = 1;
     int32  userId = 2;
     string checkIn = 3;
     string checkOut = 4;
 }
 
 message CreateReservation {
-    int32  propertyId = 1;
+    string  propertyId = 1;
     int32  userId = 2;
     string checkIn = 3;
     string checkOut = 4;

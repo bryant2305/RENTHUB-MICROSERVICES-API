@@ -3,8 +3,10 @@ import { PropertiesService } from './properties.service';
 import { PropertiesController } from './properties.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Property, PropertySchema } from './schema/property.schema';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -12,6 +14,24 @@ import { HttpModule } from '@nestjs/axios';
       {
         name: Property.name,
         schema: PropertySchema,
+      },
+    ]),
+    ClientsModule.registerAsync([
+      {
+        name: 'USER-AUTH',
+        imports: [ConfigModule],
+        useFactory: async (configService: ConfigService) => ({
+          transport: Transport.GRPC,
+          options: {
+            package: 'user_auth_proto',
+            protoPath: join(
+              __dirname,
+              '../../src/shared/protos/user-auth.proto',
+            ),
+            url: configService.get('USER-AUTH_URL'),
+          },
+        }),
+        inject: [ConfigService],
       },
     ]),
     ConfigModule,

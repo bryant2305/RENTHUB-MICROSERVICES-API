@@ -35,10 +35,6 @@ export class CreatePropertyDto {
   @IsNumber()
   capacity: number;
 
-  @ApiProperty({ example: true })
-  @IsBoolean()
-  availability: boolean;
-
   //   @ApiProperty({ example: '' })
   //   @IsString()
   //   images: number; // falta implementar las imagenes

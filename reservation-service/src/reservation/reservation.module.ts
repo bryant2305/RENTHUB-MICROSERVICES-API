@@ -29,6 +29,22 @@ import { UtilsService } from 'src/utils/utils.service';
         }),
         inject: [ConfigService],
       },
+      {
+        name: 'PROPERTIES',
+        imports: [ConfigModule],
+        useFactory: async (configService: ConfigService) => ({
+          transport: Transport.GRPC,
+          options: {
+            package: 'properties_proto',
+            protoPath: join(
+              __dirname,
+              '../../src/shared/protos/properties.proto',
+            ),
+            url: configService.get('PROPERTIES_URL'),
+          },
+        }),
+        inject: [ConfigService],
+      },
     ]),
   ],
   controllers: [ReservationController],

@@ -6,7 +6,7 @@ export class PropertyAvailability {
   id: number;
 
   @Column()
-  propertyId: number;
+  propertyId: string;
 
   @Column()
   startDate: Date;

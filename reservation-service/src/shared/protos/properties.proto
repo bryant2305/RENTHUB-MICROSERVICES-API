@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package properties_proto;
+
+service PropertiesService {
+    rpc getPropertyById(PropertyById) returns(GetPropertyByIdResponse){}
+}
+
+message PropertyById {
+    string id = 1;
+}
+
+message GetPropertyByIdResponse {
+    string id = 1;
+  }

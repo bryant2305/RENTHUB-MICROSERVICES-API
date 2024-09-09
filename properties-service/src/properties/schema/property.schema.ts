@@ -27,9 +27,6 @@ export class Property {
   @Prop({ required: true })
   capacity: number;
 
-  @Prop({ required: true })
-  availability: boolean;
-
   // @Prop([String]) // Implementar las imágenes según sea necesario
   // images: string[];
 
