@@ -2,26 +2,58 @@ syntax = "proto3";
 
 package reservations_proto;
 
+// Definición del servicio de reservas
 service ReservationService {
-    rpc createReservation (CreateReservation) returns (ReservationResponse);
+    rpc createReservation(CreateReservation) returns (ReservationResponse);
+    rpc findReservation(ReservationById) returns (findReservationResponse);
+    rpc cancelReservation(ReservationById) returns (ReservationResponse);
+    rpc findReservationByPropertyId(PropertyById) returns (PropertyResponse);
 }
 
-message Reservation {
-    string  propertyId = 1;
-    int32  userId = 2;
-    string checkIn = 3;
-    string checkOut = 4;
+// Mensaje para buscar reserva por ID
+message ReservationById {
+    string id = 1;
 }
 
+// Mensaje para buscar reserva por PropertyId
+message PropertyById {
+    string propertyId = 1;
+}
+
+// Respuesta al buscar por PropertyId
+message PropertyResponse {
+    string propertyId = 1;
+    bool error = 2;
+    string message = 3;
+}
+
+// Mensaje para la creación de una reserva
 message CreateReservation {
-    string  propertyId = 1;
-    int32  userId = 2;
+    string propertyId = 1;
+    int32 userId = 2;
     string checkIn = 3;
     string checkOut = 4;
 }
 
+// Respuesta de la creación de una reserva
 message ReservationResponse {
     bool error = 1;
     string message = 2;
     Reservation reservation = 3;
+}
+
+// Mensaje de detalles de una reserva
+message Reservation {
+    string propertyId = 1;
+    int32 userId = 2;
+    string checkIn = 3;
+    string checkOut = 4;
+}
+
+// Respuesta al buscar por ID de reserva
+message findReservationResponse {
+    string propertyId = 1;
+    int32 userId = 2;
+    string checkIn = 3;
+    string checkOut = 4;
 }

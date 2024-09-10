@@ -14,4 +14,10 @@ export class ReservationsService {
   async create(createReservationDto: CreateReservationDto) {
     return await this.service.createReservation(createReservationDto);
   }
+  async findReservation(id: number) {
+    return await this.service.findReservartion({ id });
+  }
+  async cancelReservation(id: number) {
+    return await this.service.cancelReservation({ id });
+  }
 }

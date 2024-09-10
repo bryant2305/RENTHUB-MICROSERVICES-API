@@ -33,6 +33,22 @@ import { join } from 'path';
         }),
         inject: [ConfigService],
       },
+      {
+        name: 'RESERVATION',
+        imports: [ConfigModule],
+        useFactory: async (configService: ConfigService) => ({
+          transport: Transport.GRPC,
+          options: {
+            package: 'reservations_proto',
+            protoPath: join(
+              __dirname,
+              '../../src/shared/protos/reservations.proto',
+            ),
+            url: configService.get('RESERVATIONS_URL'),
+          },
+        }),
+        inject: [ConfigService],
+      },
     ]),
     ConfigModule,
     HttpModule,
