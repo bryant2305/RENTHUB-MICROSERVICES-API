@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Reservation } from './entities/reservation.entity';
@@ -7,6 +7,7 @@ import { ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import { PropertyAvailability } from './entities/property_availability.entity';
 import { UtilsService } from 'src/utils/utils.service';
+import { error } from 'console';
 
 @Injectable()
 export class ReservationService {
@@ -97,5 +98,48 @@ export class ReservationService {
         message: `error creating reservation ${error.message}`,
       };
     }
+  }
+
+  async findReservation(id: number) {
+    return await this.reservationRepository.findOneBy({ id });
+  }
+
+  async findReservationByPropertyId(propertyId: string) {
+    const reservation = await this.reservationRepository.findOne({
+      where: { propertyId },
+    });
+
+    if (reservation) {
+      return {
+        propertyId: reservation.propertyId,
+        userId: reservation.userId,
+        checkIn: reservation.checkIn,
+        checkOut: reservation.checkOut,
+        error: true,
+        message: 'Reserva encontrada no se puede crear ',
+      };
+    }
+
+    return {
+      propertyId,
+      error: false,
+      message: 'No se encontró ninguna reserva',
+    };
+  }
+
+  async deleteReservation(id: number) {
+    const result = await this.reservationRepository.delete({ id });
+
+    if (result.affected === 0) {
+      return {
+        error: true,
+        message: `Reservation with ID ${id} not found`,
+      };
+    }
+
+    return {
+      error: false,
+      message: `Reservation with ID ${id} deleted successfully`,
+    };
   }
 }

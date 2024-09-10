@@ -5,19 +5,27 @@ import { Property } from './schema/property.schema';
 import { Model } from 'mongoose';
 import { ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
+import { error } from 'console';
+import { ReservationResponse } from './propertyResponse/reservationResponse';
+
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const ObjectId = require('mongoose').Types.ObjectId;
 
 @Injectable()
 export class PropertiesService {
   private propertyService: any;
+  private reservationService: any;
   constructor(
     @Inject('USER-AUTH')
     private readonly propertyClient: ClientGrpc,
+    @Inject('RESERVATION')
+    private readonly reservationClient: ClientGrpc,
     @InjectModel(Property.name)
     private readonly propertyModel: Model<Property>,
   ) {
     this.propertyService = this.propertyClient.getService('UserService');
+    this.reservationService =
+      this.reservationClient.getService('ReservationService');
   }
   async create(createPropertyDto: CreatePropertyDto) {
     try {
@@ -82,10 +90,40 @@ export class PropertiesService {
     return this.propertyModel.findByIdAndUpdate(id, updateData, { new: true });
   }
 
-  deleteProperty(id: string) {
-    if (!ObjectId.isValid(id)) {
-      return null;
+  async deleteProperty(propertyId: string) {
+    try {
+      const prop: ReservationResponse = await lastValueFrom(
+        this.reservationService.findReservationByPropertyId({ propertyId }),
+      );
+
+      if (prop.error == true) {
+        return {
+          error: true,
+          message:
+            'No se puede eliminar la propiedad porque tiene una reserva vigente',
+        };
+      }
+
+      if (!ObjectId.isValid(propertyId)) {
+        return {
+          error: true,
+          message: 'ID de propiedad inválido',
+        };
+      }
+
+      const result = await this.propertyModel.findByIdAndDelete(propertyId);
+
+      if (!result) {
+        return {
+          error: true,
+          message: 'No se pudo eliminar la propiedad',
+        };
+      }
+
+      return { error: false, message: 'Propiedad eliminada exitosamente' };
+    } catch (error) {
+      console.error('Error al eliminar la propiedad:', error);
+      return { error: true, message: 'Error en el servicio de propiedades' };
     }
-    return this.propertyModel.findByIdAndDelete({ _id: id });
   }
 }
