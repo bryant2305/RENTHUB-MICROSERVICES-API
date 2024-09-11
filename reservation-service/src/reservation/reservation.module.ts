@@ -45,6 +45,19 @@ import { UtilsService } from 'src/utils/utils.service';
         }),
         inject: [ConfigService],
       },
+      {
+        name: 'EMAIL',
+        imports: [ConfigModule],
+        useFactory: async (configService: ConfigService) => ({
+          transport: Transport.GRPC,
+          options: {
+            package: 'email_proto',
+            protoPath: join(__dirname, '../../src/shared/protos/email.proto'),
+            url: configService.get('EMAIL_URL'),
+          },
+        }),
+        inject: [ConfigService],
+      },
     ]),
   ],
   controllers: [ReservationController],

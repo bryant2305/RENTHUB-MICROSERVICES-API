@@ -25,4 +25,33 @@ export class EmailService {
       return error;
     }
   }
+
+  async sendReservationEmail(
+    name: string,
+    email: string,
+    title: string,
+    address: string,
+    checkIn: string,
+    checkOut: string,
+  ) {
+    try {
+      await this.mailerService.sendMail({
+        to: email,
+        subject: 'Thanks you for booking',
+        template: '../../../src/email/templates/reservation',
+        context: {
+          name: `${name}`,
+          email: `${email}`,
+          title: `${title}`,
+          address: `${address}`,
+          checkIn: `${checkIn}`,
+          checkOut: `${checkOut}`,
+        },
+      });
+      return true;
+    } catch (error) {
+      console.log(error, 'error al mandar el correo');
+      return error;
+    }
+  }
 }

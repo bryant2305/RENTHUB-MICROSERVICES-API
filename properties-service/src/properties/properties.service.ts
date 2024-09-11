@@ -6,7 +6,7 @@ import { Model } from 'mongoose';
 import { ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import { error } from 'console';
-import { ReservationResponse } from './propertyResponse/reservationResponse';
+import { ReservationResponse } from '../Interfaces/reservation-interface';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const ObjectId = require('mongoose').Types.ObjectId;
