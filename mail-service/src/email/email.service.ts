@@ -8,12 +8,12 @@ import { MailerService } from '@nestjs-modules/mailer';
 export class EmailService {
   constructor(private readonly mailerService: MailerService) {}
 
-  async sendUserConfirmation(email: string, name: string) {
+  async sendWelcomeEmail(name: string, email: string) {
     try {
       await this.mailerService.sendMail({
         to: email,
-        subject: 'Welcome to my ApiWithMicroservice App!',
-        template: './welcome',
+        subject: 'Welcome to my RENT-HUB App!',
+        template: '../../../src/email/templates/welcome',
         context: {
           name: `${name}`,
           email: `${email}`,
