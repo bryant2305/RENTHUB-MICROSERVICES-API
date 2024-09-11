@@ -47,9 +47,6 @@ message PropertyResponse {
 }
 
 message GetPropertyByIdResponse {
-    // string id = 1;
-    // string name = 2;
-    // string email = 3;
     string title = 1;
     string description = 2;
     string address = 3;
@@ -59,6 +56,8 @@ message GetPropertyByIdResponse {
     int32 bathrooms = 7;
     int32 capacity = 8;
     int32 hostId = 9;
+    bool error = 10;
+    string message = 11;
   }
 
   message Empty {}

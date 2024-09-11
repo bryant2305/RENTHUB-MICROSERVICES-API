@@ -7,7 +7,6 @@ import { ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import { PropertyAvailability } from './entities/property_availability.entity';
 import { UtilsService } from 'src/utils/utils.service';
-import { error } from 'console';
 
 @Injectable()
 export class ReservationService {
@@ -116,7 +115,7 @@ export class ReservationService {
         checkIn: reservation.checkIn,
         checkOut: reservation.checkOut,
         error: true,
-        message: 'Reserva encontrada no se puede crear ',
+        message: 'reservation found',
       };
     }
 
@@ -129,6 +128,8 @@ export class ReservationService {
 
   async deleteReservation(id: number) {
     const result = await this.reservationRepository.delete({ id });
+
+    await this.propertyAvailabilityRepository.delete({ id });
 
     if (result.affected === 0) {
       return {
