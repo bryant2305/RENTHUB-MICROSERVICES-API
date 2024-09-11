@@ -6,7 +6,7 @@ import { Model } from 'mongoose';
 import { ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import { error } from 'console';
-import { ReservationResponse } from './propertyResponse/reservationResponse';
+import { ReservationResponse } from '../Interfaces/reservation-interface';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const ObjectId = require('mongoose').Types.ObjectId;
@@ -63,7 +63,10 @@ export class PropertiesService {
 
   findOneById(id: string) {
     if (!ObjectId.isValid(id)) {
-      return null;
+      return {
+        error: true,
+        message: `property with ID ${id} doesn't exist`,
+      };
     }
     return this.propertyModel.findOne({ _id: id });
   }
@@ -85,18 +88,21 @@ export class PropertiesService {
 
   async updateProperty(id: string, updateData: any) {
     if (!ObjectId.isValid(id)) {
-      return null;
+      return {
+        error: true,
+        message: `property with ID ${id} doesn't exist`,
+      };
     }
     return this.propertyModel.findByIdAndUpdate(id, updateData, { new: true });
   }
 
   async deleteProperty(propertyId: string) {
     try {
-      const prop: ReservationResponse = await lastValueFrom(
+      const res: ReservationResponse = await lastValueFrom(
         this.reservationService.findReservationByPropertyId({ propertyId }),
       );
 
-      if (prop.error == true) {
+      if (res.error == true) {
         return {
           error: true,
           message:

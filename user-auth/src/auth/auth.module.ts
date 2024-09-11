@@ -5,15 +5,11 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Services } from 'src/common/enums/services.enum';
 
 import { UserService } from 'src/user/user.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from 'src/user/entities/user.entity';
 import { UserModule } from 'src/user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { EmailService } from 'src/email/email.service';
 import { join } from 'path';
 
 @Module({
@@ -35,6 +31,19 @@ import { join } from 'path';
         }),
         inject: [ConfigService],
       },
+      {
+        name: 'EMAIL',
+        imports: [ConfigModule],
+        useFactory: async (configService: ConfigService) => ({
+          transport: Transport.GRPC,
+          options: {
+            package: 'email_proto',
+            protoPath: join(__dirname, '../../src/shared/protos/email.proto'),
+            url: configService.get('EMAIL_URL'),
+          },
+        }),
+        inject: [ConfigService],
+      },
     ]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
@@ -48,6 +57,6 @@ import { join } from 'path';
     UserModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, UserService, EmailService],
+  providers: [AuthService, UserService],
 })
 export class AuthModule {}

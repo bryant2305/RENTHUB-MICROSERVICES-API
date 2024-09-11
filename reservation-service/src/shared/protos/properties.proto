@@ -12,4 +12,15 @@ message PropertyById {
 
 message GetPropertyByIdResponse {
     string id = 1;
+    string title = 2;
+    string description = 3;
+    string address = 4;
+    string propertyType = 5;
+    int32 size = 6;
+    int32 bedrooms = 7;
+    int32 bathrooms = 8;
+    int32 capacity = 9;
+    int32 hostId = 10;
+    bool error = 11;
+    string message = 12;
   }

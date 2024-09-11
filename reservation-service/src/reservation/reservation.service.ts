@@ -1,4 +1,4 @@
-import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Reservation } from './entities/reservation.entity';
@@ -7,12 +7,14 @@ import { ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import { PropertyAvailability } from './entities/property_availability.entity';
 import { UtilsService } from 'src/utils/utils.service';
-import { error } from 'console';
+import { UserResponse } from '../Interfaces/user-interface';
+import { PropertyResponse } from 'src/Interfaces/property-interface';
 
 @Injectable()
 export class ReservationService {
   private userService: any;
   private propertyService: any;
+  private emailService: any;
   constructor(
     @InjectRepository(Reservation)
     private readonly reservationRepository: Repository<Reservation>,
@@ -23,13 +25,16 @@ export class ReservationService {
     private readonly userClient: ClientGrpc,
     @Inject('PROPERTIES')
     private readonly propertyClient: ClientGrpc,
+    @Inject('EMAIL')
+    private readonly emailClient: ClientGrpc,
   ) {
     this.userService = this.userClient.getService('UserService');
     this.propertyService = this.propertyClient.getService('PropertiesService');
+    this.emailService = this.emailClient.getService('MailService');
   }
   async create(createReservationDto: CreateReservationDto) {
     try {
-      const user = await lastValueFrom(
+      const user: UserResponse = await lastValueFrom(
         this.userService.getUserById({ id: createReservationDto.userId }),
       );
 
@@ -40,7 +45,7 @@ export class ReservationService {
         };
       }
 
-      const property = await lastValueFrom(
+      const property: PropertyResponse = await lastValueFrom(
         this.propertyService.getPropertyById({
           id: createReservationDto.propertyId,
         }),
@@ -87,6 +92,17 @@ export class ReservationService {
 
       await this.propertyAvailabilityRepository.save(propertyAvailability);
 
+      const reservationInfo = {
+        name: user.name,
+        email: user.email,
+        title: property.title || '', // Asigna un valor vacío si es opcional
+        address: property.address || '',
+        checkIn: new Date(checkInDate).toISOString().split('T')[0],
+        checkOut: new Date(checkOutDate).toISOString().split('T')[0],
+      };
+
+      await this.emailService.sendReservationEmail(reservationInfo).toPromise();
+
       return {
         error: false,
         message: 'reservation created!',
@@ -116,7 +132,7 @@ export class ReservationService {
         checkIn: reservation.checkIn,
         checkOut: reservation.checkOut,
         error: true,
-        message: 'Reserva encontrada no se puede crear ',
+        message: 'reservation found',
       };
     }
 
@@ -129,6 +145,8 @@ export class ReservationService {
 
   async deleteReservation(id: number) {
     const result = await this.reservationRepository.delete({ id });
+
+    await this.propertyAvailabilityRepository.delete({ id });
 
     if (result.affected === 0) {
       return {

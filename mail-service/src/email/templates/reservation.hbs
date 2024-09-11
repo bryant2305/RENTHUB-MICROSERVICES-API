@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reservation Confirmation</title>
+  <style>
+    /* General styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: #fff;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      padding: 20px;
+    }
+    
+    .header {
+      text-align: center;
+      padding: 20px 0;
+      background-color: #4CAF50;
+      color: white;
+      border-radius: 10px 10px 0 0;
+    }
+    
+    .header h1 {
+      font-size: 28px;
+    }
+    
+    .reservation-details, .property-details {
+      margin: 20px 0;
+    }
+    
+    .card {
+      background-color: #f2f2f2;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card h2 {
+      margin-bottom: 10px;
+      color: #4CAF50;
+    }
+    
+    .card p {
+      margin: 5px 0;
+      font-size: 16px;
+    }
+    
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #333;
+      color: white;
+      border-radius: 0 0 10px 10px;
+    }
+    
+    .social-icons {
+      margin-top: 10px;
+    }
+    
+    .social-icons a {
+      margin: 0 10px;
+      text-decoration: none;
+      color: white;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>Reservation Confirmed!</h1>
+    </header>
+    
+    <section class="reservation-details">
+      <div class="card">
+        <h2>Reservation Info</h2>
+        <p><strong>Name:</strong> {{name}}</p>
+        <p><strong>Email:</strong> {{email}}</p>
+        <p><strong>Property Title:</strong> {{title}}</p>
+        <p><strong>Address:</strong> {{address}}</p>
+        <p><strong>Check-in:</strong> {{checkIn}}</p>
+        <p><strong>Check-out:</strong> {{checkOut}}</p>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>&copy; 2024 YourCompany. All Rights Reserved.</p>
+      <div class="social-icons">
+        <a href="#">🐦</a>
+        <a href="#">📘</a>
+        <a href="#">📸</a>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

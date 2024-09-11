@@ -1,21 +1,19 @@
-import {
-  BadRequestException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
 import { UserService } from 'src/user/user.service';
 import { LoginDto } from './dto/login.dto';
-import { EmailService } from 'src/email/email.service';
-import { catchError } from 'rxjs';
-import { RpcException } from '@nestjs/microservices';
+import { ClientGrpc, RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class AuthService {
+  private emailService: any;
   constructor(
+    @Inject('EMAIL')
+    private readonly emailClient: ClientGrpc,
     private readonly userService: UserService,
-    private readonly emailService: EmailService,
-  ) {}
+  ) {
+    this.emailService = this.emailClient.getService('MailService');
+  }
   async register(registerDto: RegisterDto) {
     try {
       const { email, password } = registerDto;
@@ -33,7 +31,14 @@ export class AuthService {
         ...registerDto,
         password: hashedPassword,
       });
-      await this.emailService.sendUserConfirmation(newUser.email, newUser.name);
+      // Asegúrate de que el `sendWelcomeEmail` está bien definido y corresponde con la RPC en el archivo `.proto`
+      await this.emailService
+        .sendWelcomeEmail({
+          name: newUser.name,
+          email: newUser.email,
+        })
+        .toPromise();
+
       return { user: newUser };
     } catch (error) {
       throw new RpcException(error);

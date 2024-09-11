@@ -11,7 +11,7 @@ export class ReservationController {
   create(@Payload() createReservationDto: CreateReservationDto) {
     return this.reservationService.create(createReservationDto);
   }
-  @GrpcMethod('ReservationService', 'findReservartion')
+  @GrpcMethod('ReservationService', 'findReservation')
   async findReservation(data: { id: number }) {
     const reservation = await this.reservationService.findReservation(data.id);
 
