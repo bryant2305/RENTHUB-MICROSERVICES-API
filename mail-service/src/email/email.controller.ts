@@ -10,7 +10,6 @@ export class EmailController {
 
   @GrpcMethod('MailService', 'sendWelcomeEmail')
   async create(@Payload() createEmailDto: CreateEmailDto) {
-    console.log('eee');
     return this.emailService.sendWelcomeEmail(
       createEmailDto.name,
       createEmailDto.email,
@@ -20,7 +19,6 @@ export class EmailController {
   async sendReservationEmail(
     @Payload() createEmailReservationDto: CreateEmailReservationDto,
   ) {
-    console.log('eee');
     return this.emailService.sendReservationEmail(
       createEmailReservationDto.name,
       createEmailReservationDto.email,
