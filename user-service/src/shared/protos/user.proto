@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package user_proto;
+
+
+service UserService {
+    rpc getUserById(GetUserByIdRequest) returns (GetUserByIdResponse);
+    rpc getUserByEmail(GetUserByEmail) returns (GetUserByEmailResponse);
+    rpc createUser(CreateUser) returns (CreateUserResponse);
+  }
+  //create
+  message CreateUser {
+    string name = 1;
+    string email = 2;
+    string password = 3;
+  }
+  message User {
+    string name = 1;
+    string email = 2;
+    string password = 3;
+  }
+
+  message CreateUserResponse {
+    bool error = 1;
+    string message = 2;
+    User user = 3;
+  }
+  
+//get
+  message GetUserByIdResponse {
+    int32 id = 1;
+    string name = 2;
+    string email = 3;
+  }
+
+  message GetUserByIdRequest {
+    int32 id = 1;
+  }
+  message GetUserByEmail {
+    string email = 1;
+  }
+
+  message GetUserByEmailResponse {
+    int32 id = 1;
+    string name = 2;
+    string email = 3;
+  }

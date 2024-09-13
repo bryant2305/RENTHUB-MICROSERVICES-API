@@ -5,7 +5,7 @@ import { AuthService } from './auth.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { UserService } from 'src/user/user.service';
+import { UserService } from 'src/services/user-service/user.service';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwt.strategy';
 import { AuthGuard } from './auth-guard-token';
@@ -15,17 +15,27 @@ import { join } from 'path';
   imports: [
     ClientsModule.registerAsync([
       {
-        name: 'USER-AUTH',
+        name: 'USER-SERVICE',
         imports: [ConfigModule],
         useFactory: async (configService: ConfigService) => ({
           transport: Transport.GRPC,
           options: {
-            package: 'user_auth_proto',
-            protoPath: join(
-              __dirname,
-              '../../src/shared/protos/user-auth.proto',
-            ),
-            url: configService.get('USER-AUTH_URL'),
+            package: 'user_proto',
+            protoPath: join(__dirname, '../../src/shared/protos/user.proto'),
+            url: configService.get('USER_URL'),
+          },
+        }),
+        inject: [ConfigService],
+      },
+      {
+        name: 'AUTH',
+        imports: [ConfigModule],
+        useFactory: async (configService: ConfigService) => ({
+          transport: Transport.GRPC,
+          options: {
+            package: 'auth_proto',
+            protoPath: join(__dirname, '../../src/shared/protos/auth.proto'),
+            url: configService.get('AUTH_URL'),
           },
         }),
         inject: [ConfigService],

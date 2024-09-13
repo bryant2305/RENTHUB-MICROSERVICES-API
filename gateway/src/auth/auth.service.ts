@@ -10,26 +10,28 @@ import { JwtStrategy } from './jwt.strategy';
 @Injectable()
 export class AuthService {
   private authService: any;
-  private userService: any;
   constructor(
-    @Inject('USER-AUTH')
+    @Inject('AUTH')
     private readonly client: ClientGrpc,
     private readonly authGuard: AuthGuard,
     private readonly jwtStrategy: JwtStrategy,
   ) {
     this.authService = this.client.getService('AuthService');
-    this.userService = this.client.getService('UserService');
+    this.authService = this.client.getService('AuthService');
   }
   async register(data: RegisterDto) {
     try {
-      const result = await this.userService.register(data).toPromise();
+      // Obtener el resultado de la llamada al microservicio
+      const result = await this.authService.register(data).toPromise();
 
-      const token = this.authGuard.generateToken(
-        result.user.id,
-        result.user.email,
-      );
+      // Acceder al usuario dentro de 'result.user'
+      const user = result.user;
 
-      return { user: result.user, token };
+      // Generar el token usando los datos del usuario
+      const token = this.authGuard.generateToken(user.id, user.email);
+
+      // Retornar el usuario y el token
+      return { user, token };
     } catch (error) {
       throw new RpcException(error);
     }

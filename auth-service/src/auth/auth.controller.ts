@@ -8,7 +8,7 @@ import { RegisterDto } from './dto/register.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @GrpcMethod('UserService', 'register')
+  @GrpcMethod('AuthService', 'register')
   async Register(@Payload() data: RegisterDto) {
     return this.authService.register(data);
   }

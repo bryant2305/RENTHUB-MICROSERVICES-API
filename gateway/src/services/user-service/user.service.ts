@@ -6,7 +6,7 @@ export class UserService {
   private userService: any;
   private authService: any;
   constructor(
-    @Inject('USER-AUTH')
+    @Inject('USER-SERVICE')
     private readonly client: ClientGrpc,
   ) {
     // this.authService = this.client.getService('AuthService');

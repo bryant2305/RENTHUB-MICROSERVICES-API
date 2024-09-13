@@ -1,0 +1,79 @@
+import { Inject, Injectable } from '@nestjs/common';
+import { LoginDto } from './dto/login.dto';
+import { ClientGrpc, RpcException } from '@nestjs/microservices';
+import { RegisterDto } from './dto/register.dto';
+import { UtilService } from 'src/utils/utils.service';
+
+@Injectable()
+export class AuthService {
+  private emailService: any;
+  private userService: any;
+  constructor(
+    @Inject('EMAIL')
+    private readonly emailClient: ClientGrpc,
+    @Inject('USER-SERVICE')
+    private readonly userClient: ClientGrpc,
+    private readonly utilService: UtilService,
+  ) {
+    this.emailService = this.emailClient.getService('MailService');
+    this.userService = this.userClient.getService('UserService');
+  }
+  async register(registerDto: RegisterDto) {
+    try {
+      const { email, password } = registerDto;
+
+      // const existingUser = await this.userService
+      //   .getUserByEmail({ email })
+      //   .toPromise();
+      // if (existingUser) {
+      //   throw new RpcException({
+      //     status: 400,
+      //     message: ' user already exist',
+      //   });
+      // }
+
+      const hashedPassword = await this.utilService.hashPassword(password);
+      const newUser = await this.userService
+        .createUser({
+          ...registerDto,
+          password: hashedPassword,
+        })
+        .toPromise();
+      const user = newUser.user || newUser; // Si el usuario está anidado bajo `user`
+
+      return { user };
+      // Asegúrate de que el `sendWelcomeEmail` está bien definido y corresponde con la RPC en el archivo `.proto`
+      // await this.emailService
+      //   .sendWelcomeEmail({
+      //     name: newUser.name,
+      //     email: newUser.email,
+      //   })
+      //   .toPromise();
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
+  async login(loginDto: LoginDto) {
+    const { email, password } = loginDto;
+
+    const user = await this.userService.findOneByEmail(email);
+    if (!user) {
+      throw new RpcException({
+        status: 400,
+        message: ' usuario no encontrado',
+      });
+    }
+    const isPasswordValid = await this.userService.comparePasswords(
+      password,
+      user.password,
+    );
+    if (!isPasswordValid) {
+      throw new RpcException({
+        status: 400,
+        message: 'Usuario no encontrado', // Corregido de "messague" a "message"
+      });
+    }
+
+    return user;
+  }
+}

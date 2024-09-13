@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package auth_proto;
+
+
+service AuthService {
+    rpc login(AuthRequest) returns (AuthResponse);
+    rpc register(CreateUser) returns (CreateUserResponse);
+  }
+  
+  message AuthRequest {
+    string email = 1;
+    string password = 2;
+  }
+  
+  message AuthResponse {
+    bool  error = 1;
+    string message = 2;
+    User user = 3;
+}
+
+  //create
+  message CreateUser {
+    string name = 1;
+    string email = 2;
+    string password = 3;
+  }
+  message User {
+    string name = 1;
+    string email = 2;
+    string password = 3;
+  }
+
+  message CreateUserResponse {
+    bool error = 1;
+    string message = 2;
+    User user = 3;
+  }
+  

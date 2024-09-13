@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package email_proto;
+
+
+service MailService {
+    rpc sendWelcomeEmail(UserInfo) returns (UserInfoResponse);
+  }
+  
+  message UserInfo {
+    string name = 1;
+    string email = 2;
+  }
+  
+  message UserInfoResponse {
+    bool  error = 1;
+    string message = 2;
+    UserInfo user = 3;
+}

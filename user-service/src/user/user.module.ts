@@ -12,17 +12,14 @@ import { join } from 'path';
     TypeOrmModule.forFeature([User]),
     ClientsModule.registerAsync([
       {
-        name: 'USER-AUTH',
+        name: 'USER',
         imports: [ConfigModule],
         useFactory: async (configService: ConfigService) => ({
           transport: Transport.GRPC,
           options: {
-            package: 'user_auth_proto',
-            protoPath: join(
-              __dirname,
-              '../../src/shared/protos/user-auth.proto',
-            ),
-            url: configService.get('USER-AUTH_URL'),
+            package: 'user_proto',
+            protoPath: join(__dirname, '../../src/shared/protos/user.proto'),
+            url: configService.get('USER_URL'),
           },
         }),
         inject: [ConfigService],

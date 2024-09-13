@@ -3,7 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
-import { UserModule } from './user/user.module';
+import { UserModule } from './services/user-service/user.module';
 import { PropertiesModule } from './services/properties/properties.module';
 import { ReservationsModule } from './services/reservations/reservations.module';
 import { CacheModule } from '@nestjs/cache-manager';

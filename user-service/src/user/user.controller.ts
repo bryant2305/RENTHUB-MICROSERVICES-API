@@ -1,6 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { GrpcMethod, RpcException } from '@nestjs/microservices';
 import { UserService } from './user.service';
+import { RegisterDto } from './dto/register.dto';
 
 @Controller()
 export class UserController {
@@ -29,5 +30,13 @@ export class UserController {
       name: user.name,
       email: user.email,
     };
+  }
+  @GrpcMethod('UserService', 'createUser')
+  async Register(data: RegisterDto) {
+    const user = await this.userService.findOneByEmail(data.email);
+    if (user) {
+      throw new RpcException('User alredy exist');
+    }
+    return await this.userService.createUser(data);
   }
 }

@@ -23,7 +23,7 @@ export class PropertiesService {
     @InjectModel(Property.name)
     private readonly propertyModel: Model<Property>,
   ) {
-    this.propertyService = this.propertyClient.getService('UserService');
+    this.propertyService = this.propertyClient.getService('UserService'); // y como eto funca
     this.reservationService =
       this.reservationClient.getService('ReservationService');
   }
