@@ -16,7 +16,7 @@ export class PropertiesService {
   private propertyService: any;
   private reservationService: any;
   constructor(
-    @Inject('USER-AUTH')
+    @Inject('USER-SERVICE')
     private readonly propertyClient: ClientGrpc,
     @Inject('RESERVATION')
     private readonly reservationClient: ClientGrpc,

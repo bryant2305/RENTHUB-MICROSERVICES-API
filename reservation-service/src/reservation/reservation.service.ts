@@ -21,7 +21,7 @@ export class ReservationService {
     @InjectRepository(PropertyAvailability)
     private readonly propertyAvailabilityRepository: Repository<PropertyAvailability>,
     private readonly utilService: UtilsService,
-    @Inject('USER-AUTH')
+    @Inject('USER-SERVICES')
     private readonly userClient: ClientGrpc,
     @Inject('PROPERTIES')
     private readonly propertyClient: ClientGrpc,
