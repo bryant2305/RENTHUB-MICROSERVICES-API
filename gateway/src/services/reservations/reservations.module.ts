@@ -4,6 +4,7 @@ import { ReservationsController } from './reservations.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { join } from 'path';
+import { UtilsService } from 'src/utils/utils.service';
 
 @Module({
   imports: [
@@ -27,6 +28,6 @@ import { join } from 'path';
     ]),
   ],
   controllers: [ReservationsController],
-  providers: [ReservationsService],
+  providers: [ReservationsService, UtilsService],
 })
 export class ReservationsModule {}

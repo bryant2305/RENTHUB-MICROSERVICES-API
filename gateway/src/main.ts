@@ -11,7 +11,7 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const config = new DocumentBuilder()
     .addBearerAuth()
-    .setTitle('AuthWithMicroServices')
+    .setTitle('RENT-HUB API')
     .setDescription('Api for properties rentals')
     .setVersion('1.0')
     .build();

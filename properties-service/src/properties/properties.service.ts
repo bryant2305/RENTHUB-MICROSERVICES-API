@@ -65,7 +65,7 @@ export class PropertiesService {
     if (!ObjectId.isValid(id)) {
       return {
         error: true,
-        message: `property with ID ${id} doesn't exist`,
+        message: ` property with ID ${id} doesn't exist`,
       };
     }
     return this.propertyModel.findOne({ _id: id });
@@ -90,7 +90,7 @@ export class PropertiesService {
     if (!ObjectId.isValid(id)) {
       return {
         error: true,
-        message: `property with ID ${id} doesn't exist`,
+        message: ` property with ID ${id} doesn't exist`,
       };
     }
     return this.propertyModel.findByIdAndUpdate(id, updateData, { new: true });

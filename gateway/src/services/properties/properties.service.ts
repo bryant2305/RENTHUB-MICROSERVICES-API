@@ -2,6 +2,9 @@ import { Inject, Injectable } from '@nestjs/common';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { ClientGrpc } from '@nestjs/microservices';
 import { UpdatePropertyDto } from './dto/update-property.dto';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
+import { UtilsService } from 'src/utils/utils.service';
 
 @Injectable()
 export class PropertiesService {
@@ -9,20 +12,34 @@ export class PropertiesService {
   constructor(
     @Inject('PROPERTIES')
     private readonly client: ClientGrpc,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private readonly utilsService: UtilsService,
   ) {
     this.service = this.client.getService('PropertiesService');
   }
   async create(createPropertyDto: CreatePropertyDto) {
+    await this.cacheManager.del(process.env.PROPERTIES_CACHE_KEY);
     return await this.service.create(createPropertyDto);
   }
   async getAll() {
-    return await this.service.getAllProperties({});
+    return await this.utilsService.getOrSetCache(
+      process.env.PROPERTIES_CACHE_KEY,
+      async () => {
+        return await this.service.getAllProperties({}).toPromise();
+      },
+    );
   }
+
   async findProperty(id: string) {
-    return await this.service.getPropertyById({ id });
+    const cacheKey = `${process.env.PROPERTIES_CACHE_KEY}_${id}`;
+    return await this.utilsService.getOrSetCache(cacheKey, async () => {
+      return await this.service.getPropertyById({ id }).toPromise();
+    });
   }
   async updateProperty(id: string, updatePropertyDto: UpdatePropertyDto) {
-    // Desempaqueta los campos del DTO para enviarlos en el formato esperado por el servicio gRPC
+    const cacheKey = `${process.env.PROPERTIES_CACHE_KEY}_${id}`;
+    // Elimina el caché de la propiedad actualizada
+    await this.cacheManager.del(cacheKey);
     return await this.service.updateProperty({
       id,
       title: updatePropertyDto.title,
