@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { PropertyType } from 'src/enums/property.enum';
+import { PropertyType } from 'src/common/enums/property.enum';
 
 @Schema()
 export class Property {

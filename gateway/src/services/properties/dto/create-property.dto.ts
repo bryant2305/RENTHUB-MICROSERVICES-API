@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsEnum, IsNumber, IsString } from 'class-validator';
-import { PropertyType } from 'src/enums/property.enum';
+import { PropertyType } from 'src/common/enums/property.enum';
 
 export class CreatePropertyDto {
   @ApiProperty({ example: 'apartamento con vista al mar' })

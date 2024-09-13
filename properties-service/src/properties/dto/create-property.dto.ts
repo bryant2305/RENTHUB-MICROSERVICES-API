@@ -1,5 +1,5 @@
 import { IsEnum, IsString, IsNumber, IsBoolean } from 'class-validator';
-import { PropertyType } from 'src/enums/property.enum';
+import { PropertyType } from 'src/common/enums/property.enum';
 
 export class CreatePropertyDto {
   @IsString()
