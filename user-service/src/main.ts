@@ -18,7 +18,7 @@ async function bootstrap() {
       package: 'user_auth_proto',
       protoPath: join(
         __dirname,
-        '../../user-auth/src/shared/protos/user-auth.proto',
+        '../../user-service/src/shared/protos/user-auth.proto',
       ),
       url: `${url}:${port}`,
     },
