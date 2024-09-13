@@ -4,6 +4,7 @@ import { PropertiesController } from './properties.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { join } from 'path';
+import { UtilsService } from 'src/utils/utils.service';
 
 @Module({
   imports: [
@@ -27,6 +28,6 @@ import { join } from 'path';
     ]),
   ],
   controllers: [PropertiesController],
-  providers: [PropertiesService],
+  providers: [PropertiesService, UtilsService],
 })
 export class PropertiesModule {}
