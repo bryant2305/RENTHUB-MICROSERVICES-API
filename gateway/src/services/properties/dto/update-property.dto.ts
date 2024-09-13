@@ -1,7 +1,7 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreatePropertyDto } from './create-property.dto';
 import { ApiProperty } from '@nestjs/swagger';
-import { PropertyType } from 'src/enums/property.enum';
+import { PropertyType } from 'src/common/enums/property.enum';
 
 export class UpdatePropertyDto extends PartialType(CreatePropertyDto) {
   @ApiProperty({

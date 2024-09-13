@@ -1,11 +1,9 @@
 // auth.controller.ts (Microservicio Secundario)
 
 import { Controller } from '@nestjs/common';
-import { EventPattern, GrpcMethod, Payload } from '@nestjs/microservices';
+import { GrpcMethod, Payload } from '@nestjs/microservices';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
-import { EventCommands } from 'src/common/event-commands.enum';
-
 @Controller()
 export class AuthController {
   constructor(private readonly authService: AuthService) {}

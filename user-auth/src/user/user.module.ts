@@ -4,7 +4,6 @@ import { UserController } from './user.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { Services } from 'src/common/enums/services.enum';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { join } from 'path';
 
