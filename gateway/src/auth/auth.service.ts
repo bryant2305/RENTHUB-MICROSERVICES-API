@@ -24,7 +24,6 @@ export class AuthService {
       // Obtener el resultado de la llamada al microservicio
       const result = await this.authService.register(data).toPromise();
 
-      // Acceder al usuario dentro de 'result.user'
       const user = result.user;
 
       // Generar el token usando los datos del usuario
@@ -39,7 +38,7 @@ export class AuthService {
 
   async login(data: LoginDto) {
     try {
-      // const result = await this.authService.login(data).toPromise();
+      await this.authService.login(data).toPromise();
 
       const user = await this.jwtStrategy.validate({ email: data.email });
 

@@ -56,14 +56,14 @@ export class AuthService {
   async login(loginDto: LoginDto) {
     const { email, password } = loginDto;
 
-    const user = await this.userService.findOneByEmail(email);
+    const user = await this.userService.getUserByEmail({ email }).toPromise();
     if (!user) {
       throw new RpcException({
         status: 400,
         message: ' usuario no encontrado',
       });
     }
-    const isPasswordValid = await this.userService.comparePasswords(
+    const isPasswordValid = await this.utilService.comparePasswords(
       password,
       user.password,
     );

@@ -29,6 +29,7 @@ export class UserController {
       id: user.id,
       name: user.name,
       email: user.email,
+      password: user.password,
     };
   }
   @GrpcMethod('UserService', 'createUser')
