@@ -1,7 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { GrpcMethod, Payload } from '@nestjs/microservices';
 import { EmailService } from './email.service';
-import { CreateEmailDto } from './dto/create-email.dto';
 import { CreateEmailReservationDto } from './dto/create-email-reservation.dto';
 
 @Controller()

@@ -20,17 +20,7 @@ export class AuthService {
   }
   async register(registerDto: RegisterDto) {
     try {
-      const { email, password } = registerDto;
-
-      // const existingUser = await this.userService
-      //   .getUserByEmail({ email })
-      //   .toPromise();
-      // if (existingUser) {
-      //   throw new RpcException({
-      //     status: 400,
-      //     message: ' user already exist',
-      //   });
-      // }
+      const { password } = registerDto;
 
       const hashedPassword = await this.utilService.hashPassword(password);
       const newUser = await this.userService

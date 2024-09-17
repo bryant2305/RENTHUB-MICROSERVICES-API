@@ -6,7 +6,11 @@ import { ConfigModule } from '@nestjs/config';
 import { HealthCheckModule } from './health-check/health-check.module';
 
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true, cache: true }), AuthModule, HealthCheckModule],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true, cache: true }),
+    AuthModule,
+    HealthCheckModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
