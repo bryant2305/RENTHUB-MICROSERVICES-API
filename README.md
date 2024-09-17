@@ -75,3 +75,6 @@ inicia Redis-server.exe
 
 💬 Let's Connect!
 Have questions or want to collaborate? Reach out to me on LinkedIn or shoot me an email at bryantperezgarcia005@gmail.com
+
+<img width="733" alt="image" src="https://github.com/user-attachments/assets/f7ecd0f1-e942-480b-810d-3d5c79896d25">
+
