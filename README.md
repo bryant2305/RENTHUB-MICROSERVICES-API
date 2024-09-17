@@ -1,7 +1,9 @@
 🏡 RentHub API
+
 RentHub es una API con arquitectura de microservicios diseñada para probar y mostrar mis habilidades en el desarrollo de sistemas escalables y modernos utilizando microservicios. 🚀
 
 🧑‍💻 Servicios
+
 1️⃣ Gateway
 El punto de entrada de toda la API, que se encarga de enrutar las solicitudes a los microservicios correspondientes y gestionar la comunicación entre ellos.
 
