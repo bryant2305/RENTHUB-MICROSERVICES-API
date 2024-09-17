@@ -5,7 +5,6 @@ import { Property } from './schema/property.schema';
 import { Model } from 'mongoose';
 import { ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
-import { error } from 'console';
 import { ReservationResponse } from '../Interfaces/reservation-interface';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports

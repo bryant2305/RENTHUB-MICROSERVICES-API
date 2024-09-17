@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsEnum, IsNumber, IsString } from 'class-validator';
+import { IsEnum, IsNumber, IsString } from 'class-validator';
 import { PropertyType } from 'src/common/enums/property.enum';
 
 export class CreatePropertyDto {
@@ -34,10 +34,6 @@ export class CreatePropertyDto {
   @ApiProperty({ example: '2' })
   @IsNumber()
   capacity: number;
-
-  //   @ApiProperty({ example: '' })
-  //   @IsString()
-  //   images: number; // falta implementar las imagenes
 
   @ApiProperty({ example: '1' })
   @IsNumber()

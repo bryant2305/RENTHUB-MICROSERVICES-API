@@ -20,17 +20,7 @@ export class AuthService {
   }
   async register(registerDto: RegisterDto) {
     try {
-      const { email, password } = registerDto;
-
-      // const existingUser = await this.userService
-      //   .getUserByEmail({ email })
-      //   .toPromise();
-      // if (existingUser) {
-      //   throw new RpcException({
-      //     status: 400,
-      //     message: ' user already exist',
-      //   });
-      // }
+      const { password } = registerDto;
 
       const hashedPassword = await this.utilService.hashPassword(password);
       const newUser = await this.userService
@@ -41,14 +31,13 @@ export class AuthService {
         .toPromise();
       const user = newUser.user || newUser; // Si el usuario está anidado bajo `user`
 
+      await this.emailService
+        .sendWelcomeEmail({
+          name: user.name,
+          email: user.email,
+        })
+        .toPromise();
       return { user };
-      // Asegúrate de que el `sendWelcomeEmail` está bien definido y corresponde con la RPC en el archivo `.proto`
-      // await this.emailService
-      //   .sendWelcomeEmail({
-      //     name: newUser.name,
-      //     email: newUser.email,
-      //   })
-      //   .toPromise();
     } catch (error) {
       throw new RpcException(error);
     }

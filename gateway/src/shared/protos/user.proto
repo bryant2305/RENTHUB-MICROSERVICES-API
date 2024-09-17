@@ -46,3 +46,11 @@ service UserService {
     string email = 3;
     string password = 4;
   }
+  message Empty {}
+
+  service HealthCheckService{
+      rpc getHealthStatus(Empty) returns(HealtCheckResponse){}
+    }
+    message HealtCheckResponse{
+      bool status = 1;
+    }

@@ -7,7 +7,7 @@ service PropertiesService {
     rpc getPropertyById(PropertyById) returns(GetPropertyByIdResponse){}
     rpc getAllProperties(Empty) returns (PropertiesListResponse) {}
     rpc updateProperty(UpdateProperty) returns (GetPropertyByIdResponse) {}
-    rpc deleteProperty(PropertyById) returns(GetPropertyByIdResponse){}
+    rpc deleteProperty(PropertyById) returns(DeletePropertyResponse){}
 }
 
 message PropertyById {
@@ -81,3 +81,17 @@ message UpdateProperty {
     int32 capacity = 9;
     // string images = 11; // Implementar las imágenes si es necesario
 }
+
+message DeletePropertyResponse {
+    bool error = 1;
+    string message = 2;
+  }
+
+  service HealthCheckService{
+    rpc getHealthStatus(Empty) returns(HealtCheckResponse){}
+  }
+
+  message HealtCheckResponse{
+    bool status = 1;
+  }
+  

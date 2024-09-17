@@ -7,6 +7,7 @@ import { UserModule } from './services/user-service/user.module';
 import { PropertiesModule } from './services/properties/properties.module';
 import { ReservationsModule } from './services/reservations/reservations.module';
 import { CacheModule } from '@nestjs/cache-manager';
+import { HealthCheckModule } from './health-check/health-check.module';
 import * as redisStore from 'cache-manager-ioredis';
 
 @Module({
@@ -23,6 +24,7 @@ import * as redisStore from 'cache-manager-ioredis';
     UserModule,
     PropertiesModule,
     ReservationsModule,
+    HealthCheckModule,
   ],
   controllers: [AppController],
   providers: [AppService],
