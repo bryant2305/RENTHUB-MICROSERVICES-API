@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
+import { HealthCheckModule } from './health-check/health-check.module';
 import typeorm from './config/typeorm';
 
 @Module({
@@ -15,6 +16,7 @@ import typeorm from './config/typeorm';
         configService.get('typeorm'),
     }),
     UserModule,
+    HealthCheckModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -41,14 +41,13 @@ export class AuthService {
         .toPromise();
       const user = newUser.user || newUser; // Si el usuario está anidado bajo `user`
 
+      await this.emailService
+        .sendWelcomeEmail({
+          name: user.name,
+          email: user.email,
+        })
+        .toPromise();
       return { user };
-      // Asegúrate de que el `sendWelcomeEmail` está bien definido y corresponde con la RPC en el archivo `.proto`
-      // await this.emailService
-      //   .sendWelcomeEmail({
-      //     name: newUser.name,
-      //     email: newUser.email,
-      //   })
-      //   .toPromise();
     } catch (error) {
       throw new RpcException(error);
     }

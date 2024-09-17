@@ -9,7 +9,7 @@ export class EmailController {
   constructor(private readonly emailService: EmailService) {}
 
   @GrpcMethod('MailService', 'sendWelcomeEmail')
-  async create(@Payload() createEmailDto: CreateEmailDto) {
+  async create(createEmailDto: { email: string; name: string }) {
     return this.emailService.sendWelcomeEmail(
       createEmailDto.name,
       createEmailDto.email,

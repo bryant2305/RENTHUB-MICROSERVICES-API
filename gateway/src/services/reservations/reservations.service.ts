@@ -23,7 +23,7 @@ export class ReservationsService {
   async findReservation(id: number) {
     const cacheKey = `${process.env.RESERVATION_CACHE_KEY}_${id}`;
     return await this.utilsService.getOrSetCache(cacheKey, async () => {
-      return await this.service.getPropertyById({ id }).toPromise();
+      return await this.service.findReservation({ id }).toPromise();
     });
   }
   async cancelReservation(id: number) {

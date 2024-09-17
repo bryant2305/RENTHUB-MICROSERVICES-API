@@ -59,3 +59,13 @@ message findReservationResponse {
     bool error = 5;
     string message = 6;
 }
+
+message Empty {}
+
+service HealthCheckService{
+    rpc getHealthStatus(Empty) returns(HealtCheckResponse){}
+  }
+  message HealtCheckResponse{
+    bool status = 1;
+  }
+  

@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PropertiesModule } from './properties/properties.module';
+import { HealthCheckModule } from './health-check/health-check.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { PropertiesModule } from './properties/properties.module';
       },
     }),
     PropertiesModule,
+    HealthCheckModule,
   ],
   controllers: [AppController],
   providers: [AppService],
