@@ -31,10 +31,15 @@ Responsable de gestionar las reservas de las propiedades. Asegura que las fechas
 ⚙️ Tecnologías Utilizadas
 
 Node.js con NestJS para cada microservicio
+
 gRPC para la comunicación eficiente entre microservicios
+
 MongoDB y MySQL para el almacenamiento de datos
+
 Redis para el almacenamiento en caché y la mejora del rendimiento
+
 JWT para la autenticación segura
+
 Documentación API con Swagger.
 
 📜 Funcionalidades Clave
