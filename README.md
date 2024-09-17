@@ -60,7 +60,7 @@ Node.js y npm instalados.
 MongoDB y MySQL configurados.
 Redis instalado para el cacheo.
 
-Clona el repositorio : 
+Clona el repositorio : https://github.com/bryant2305/RENTHUB-MICROSERVICES-API.git
 
 Instala las dependencias: 
 cd renthub
