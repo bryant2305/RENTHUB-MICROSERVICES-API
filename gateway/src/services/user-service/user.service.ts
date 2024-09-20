@@ -1,16 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
+import { UserServiceInterface } from 'src/Interfaces/user-interface';
 
 @Injectable()
 export class UserService {
-  private userService: any;
-  private authService: any;
+  private userService: UserServiceInterface;
   constructor(
     @Inject('USER-SERVICE')
     private readonly client: ClientGrpc,
   ) {
-    // this.authService = this.client.getService('AuthService');
-    this.userService = this.client.getService('UserService');
+    this.userService =
+      this.client.getService<UserServiceInterface>('UserService');
   }
   findAll() {}
 

@@ -4,29 +4,31 @@ import { ClientGrpc } from '@nestjs/microservices';
 import { UtilsService } from 'src/utils/utils.service';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import { ReservationServiceInterface } from 'src/Interfaces/reservation-interface';
 
 @Injectable()
 export class ReservationsService {
-  private service: any;
+  private reservationService: ReservationServiceInterface;
   constructor(
     @Inject('RESERVATIONS')
     private readonly client: ClientGrpc,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly utilsService: UtilsService,
   ) {
-    this.service = this.client.getService('ReservationService');
+    this.reservationService =
+      this.client.getService<ReservationServiceInterface>('ReservationService');
   }
   async create(createReservationDto: CreateReservationDto) {
     await this.cacheManager.del(process.env.RESERVATION_CACHE_KEY);
-    return await this.service.createReservation(createReservationDto);
+    return this.reservationService.createReservation(createReservationDto);
   }
   async findReservation(id: number) {
     const cacheKey = `${process.env.RESERVATION_CACHE_KEY}_${id}`;
     return await this.utilsService.getOrSetCache(cacheKey, async () => {
-      return await this.service.findReservation({ id }).toPromise();
+      return await this.reservationService.findReservation({ id }).toPromise();
     });
   }
   async cancelReservation(id: number) {
-    return await this.service.cancelReservation({ id });
+    return this.reservationService.cancelReservation({ id });
   }
 }

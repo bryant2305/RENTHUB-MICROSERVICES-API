@@ -5,17 +5,19 @@ import { UpdatePropertyDto } from './dto/update-property.dto';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { UtilsService } from 'src/utils/utils.service';
+import { PropertyServiceInterface } from 'src/Interfaces/property-interface';
 
 @Injectable()
 export class PropertiesService {
-  private service: any;
+  private service: PropertyServiceInterface;
   constructor(
     @Inject('PROPERTIES')
     private readonly client: ClientGrpc,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly utilsService: UtilsService,
   ) {
-    this.service = this.client.getService('PropertiesService');
+    this.service =
+      this.client.getService<PropertyServiceInterface>('PropertiesService');
   }
   async create(createPropertyDto: CreatePropertyDto) {
     await this.cacheManager.del(process.env.PROPERTIES_CACHE_KEY);
@@ -50,7 +52,7 @@ export class PropertiesService {
       bedrooms: updatePropertyDto.bedrooms,
       bathrooms: updatePropertyDto.bathrooms,
       capacity: updatePropertyDto.capacity,
-      hostId: updatePropertyDto.hostId,
+      // hostId: updatePropertyDto.hostId,
     });
   }
   async deleteProperty(id: string) {

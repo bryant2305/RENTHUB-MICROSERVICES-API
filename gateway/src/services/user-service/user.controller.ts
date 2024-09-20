@@ -13,7 +13,6 @@ export class UserController {
   @ApiBearerAuth()
   @UseGuards(JwtGuard)
   getUser(@Param('id') id: number) {
-    // Puedes construir tu objeto UserDto si es necesario
     return this.userService.findOneUserById(id);
   }
 }
