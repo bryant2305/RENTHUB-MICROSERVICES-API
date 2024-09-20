@@ -3,11 +3,17 @@ import { LoginDto } from './dto/login.dto';
 import { ClientGrpc, RpcException } from '@nestjs/microservices';
 import { RegisterDto } from './dto/register.dto';
 import { UtilService } from 'src/utils/utils.service';
+import { MailServiceInterface } from 'src/interfaces/mail-interface';
+import {
+  CreateUserResponse,
+  UserServiceInterface,
+} from 'src/interfaces/user-interface';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class AuthService {
-  private emailService: any;
-  private userService: any;
+  private emailService: MailServiceInterface;
+  private userService: UserServiceInterface;
   constructor(
     @Inject('EMAIL')
     private readonly emailClient: ClientGrpc,
@@ -15,28 +21,30 @@ export class AuthService {
     private readonly userClient: ClientGrpc,
     private readonly utilService: UtilService,
   ) {
-    this.emailService = this.emailClient.getService('MailService');
-    this.userService = this.userClient.getService('UserService');
+    this.emailService =
+      this.emailClient.getService<MailServiceInterface>('MailService');
+    this.userService =
+      this.userClient.getService<UserServiceInterface>('UserService');
   }
   async register(registerDto: RegisterDto) {
     try {
       const { password } = registerDto;
 
       const hashedPassword = await this.utilService.hashPassword(password);
-      const newUser = await this.userService
-        .createUser({
+      const newUser: CreateUserResponse = await lastValueFrom(
+        this.userService.createUser({
           ...registerDto,
           password: hashedPassword,
-        })
-        .toPromise();
+        }),
+      );
       const user = newUser.user || newUser; // Si el usuario está anidado bajo `user`
 
-      await this.emailService
-        .sendWelcomeEmail({
-          name: user.name,
-          email: user.email,
-        })
-        .toPromise();
+      await lastValueFrom(
+        this.emailService.sendWelcomeEmail({
+          name: newUser.user.name,
+          email: newUser.user.email,
+        }),
+      );
       return { user };
     } catch (error) {
       throw new RpcException(error);
@@ -45,7 +53,9 @@ export class AuthService {
   async login(loginDto: LoginDto) {
     const { email, password } = loginDto;
 
-    const user = await this.userService.getUserByEmail({ email }).toPromise();
+    const user = await lastValueFrom(
+      this.userService.getUserByEmail({ email }),
+    );
     if (!user) {
       throw new RpcException({
         status: 400,

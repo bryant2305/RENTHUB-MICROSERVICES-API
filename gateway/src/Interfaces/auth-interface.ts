@@ -40,6 +40,3 @@ export interface CreateUserResponse {
   message: string;
   user: User;
 }
-
-// Empty message (for health check or other simple requests)
-export interface Empty {}
