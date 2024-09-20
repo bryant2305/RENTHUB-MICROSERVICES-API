@@ -5,26 +5,33 @@ import { Property } from './schema/property.schema';
 import { Model } from 'mongoose';
 import { ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
-import { ReservationResponse } from '../Interfaces/reservation-interface';
+import {
+  ReservationResponse,
+  ReservationServiceInterface,
+} from '../Interfaces/reservation-interface';
+import { UserServiceInterface } from 'src/Interfaces/user-interface';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const ObjectId = require('mongoose').Types.ObjectId;
 
 @Injectable()
 export class PropertiesService {
-  private propertyService: any;
-  private reservationService: any;
+  private userService: UserServiceInterface;
+  private reservationService: ReservationServiceInterface;
   constructor(
     @Inject('USER-SERVICE')
-    private readonly propertyClient: ClientGrpc,
+    private readonly userClient: ClientGrpc,
     @Inject('RESERVATION')
     private readonly reservationClient: ClientGrpc,
     @InjectModel(Property.name)
     private readonly propertyModel: Model<Property>,
   ) {
-    this.propertyService = this.propertyClient.getService('UserService'); // y como eto funca
+    this.userService =
+      this.userClient.getService<UserServiceInterface>('UserService'); // y como eto funca
     this.reservationService =
-      this.reservationClient.getService('ReservationService');
+      this.reservationClient.getService<ReservationServiceInterface>(
+        'ReservationService',
+      );
   }
   async create(createPropertyDto: CreatePropertyDto) {
     try {
@@ -32,7 +39,7 @@ export class PropertiesService {
       try {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         user = await lastValueFrom(
-          this.propertyService.getUserById({
+          this.userService.getUserById({
             id: createPropertyDto.hostId,
           }),
         );
