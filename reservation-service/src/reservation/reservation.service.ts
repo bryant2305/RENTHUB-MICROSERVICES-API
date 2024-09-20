@@ -7,14 +7,21 @@ import { ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import { PropertyAvailability } from './entities/property_availability.entity';
 import { UtilsService } from 'src/utils/utils.service';
-import { UserResponse } from '../Interfaces/user-interface';
-import { PropertyResponse } from 'src/Interfaces/property-interface';
+import {
+  PropertyResponse,
+  PropertyServiceInterface,
+} from 'src/Interfaces/property-interface';
+import {
+  CreateUserResponse,
+  UserServiceInterface,
+} from 'src/Interfaces/user-interface';
+import { MailServiceInterface } from 'src/Interfaces/mail-interface';
 
 @Injectable()
 export class ReservationService {
-  private userService: any;
-  private propertyService: any;
-  private emailService: any;
+  private userService: UserServiceInterface;
+  private propertyService: PropertyServiceInterface;
+  private emailService: MailServiceInterface;
   constructor(
     @InjectRepository(Reservation)
     private readonly reservationRepository: Repository<Reservation>,
@@ -28,13 +35,18 @@ export class ReservationService {
     @Inject('EMAIL')
     private readonly emailClient: ClientGrpc,
   ) {
-    this.userService = this.userClient.getService('UserService');
-    this.propertyService = this.propertyClient.getService('PropertiesService');
-    this.emailService = this.emailClient.getService('MailService');
+    this.userService =
+      this.userClient.getService<UserServiceInterface>('UserService');
+    this.propertyService =
+      this.propertyClient.getService<PropertyServiceInterface>(
+        'PropertiesService',
+      );
+    this.emailService =
+      this.emailClient.getService<MailServiceInterface>('MailService');
   }
   async create(createReservationDto: CreateReservationDto) {
     try {
-      const user: UserResponse = await lastValueFrom(
+      const user: CreateUserResponse = await lastValueFrom(
         this.userService.getUserById({ id: createReservationDto.userId }),
       );
 
@@ -91,7 +103,7 @@ export class ReservationService {
       });
 
       await this.propertyAvailabilityRepository.save(propertyAvailability);
-
+      //console.log(user.name)
       const reservationInfo = {
         name: user.name,
         email: user.email,

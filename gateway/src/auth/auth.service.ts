@@ -6,18 +6,19 @@ import { ClientGrpc, RpcException } from '@nestjs/microservices';
 import { LoginDto } from './dto/login.dto';
 import { AuthGuard } from './auth-guard-token';
 import { JwtStrategy } from './jwt.strategy';
+import { AuthServiceInterface } from 'src/Interfaces/auth-interface';
 
 @Injectable()
 export class AuthService {
-  private authService: any;
+  private authService: AuthServiceInterface;
   constructor(
     @Inject('AUTH')
     private readonly client: ClientGrpc,
     private readonly authGuard: AuthGuard,
     private readonly jwtStrategy: JwtStrategy,
   ) {
-    this.authService = this.client.getService('AuthService');
-    this.authService = this.client.getService('AuthService');
+    this.authService =
+      this.client.getService<AuthServiceInterface>('AuthService');
   }
   async register(data: RegisterDto) {
     try {

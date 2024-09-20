@@ -19,11 +19,9 @@ export interface User {
 }
 
 export interface CreateUserResponse {
-  id: number;
-  name?: string;
-  email?: string;
-  error?: boolean;
-  message?: string;
+  error: boolean;
+  message: string;
+  user: User;
 }
 
 export interface GetUserByIdRequest {
@@ -34,8 +32,6 @@ export interface GetUserByIdResponse {
   id: number;
   name: string;
   email: string;
-  error?: boolean;
-  message?: string;
 }
 
 export interface GetUserByEmail {

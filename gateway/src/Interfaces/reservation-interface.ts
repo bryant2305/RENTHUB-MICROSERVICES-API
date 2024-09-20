@@ -31,7 +31,7 @@ export interface CreateReservation {
 export interface ReservationResponse {
   error: boolean;
   message: string;
-  reservation?: Reservation;
+  reservation: Reservation;
 }
 
 export interface Reservation {

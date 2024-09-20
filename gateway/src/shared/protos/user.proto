@@ -31,6 +31,8 @@ service UserService {
     int32 id = 1;
     string name = 2;
     string email = 3;
+    bool error = 4;
+    string message = 5;
   }
 
   message GetUserByIdRequest {
@@ -45,6 +47,8 @@ service UserService {
     string name = 2;
     string email = 3;
     string password = 4;
+    bool error = 5;
+    string message = 6;
   }
   message Empty {}
 

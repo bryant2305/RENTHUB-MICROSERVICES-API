@@ -1,23 +1,34 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
-
+import { HealthCheckServiceInterface } from 'src/Interfaces/health-check-interface';
 @Injectable()
 export class HealthCheckService {
-  private readonly propertyService: any;
-  private readonly reservationService: any;
-  private readonly userService: any;
-  private readonly authService: any;
+  private readonly propertyService: HealthCheckServiceInterface;
+  private readonly reservationService: HealthCheckServiceInterface;
+  private readonly userService: HealthCheckServiceInterface;
+  private readonly authService: HealthCheckServiceInterface;
   constructor(
     @Inject('PROPERTIES') private readonly propertyClient: ClientGrpc,
     @Inject('RESERVATIONS') private readonly reservationClient: ClientGrpc,
     @Inject('USER-SERVICE') private readonly userClient: ClientGrpc,
     @Inject('AUTH') private readonly authClient: ClientGrpc,
   ) {
-    this.propertyService = this.propertyClient.getService('HealthCheckService');
+    this.propertyService =
+      this.propertyClient.getService<HealthCheckServiceInterface>(
+        'HealthCheckService',
+      );
     this.reservationService =
-      this.reservationClient.getService('HealthCheckService');
-    this.userService = this.userClient.getService('HealthCheckService');
-    this.authService = this.authClient.getService('HealthCheckService');
+      this.reservationClient.getService<HealthCheckServiceInterface>(
+        'HealthCheckService',
+      );
+    this.userService =
+      this.userClient.getService<HealthCheckServiceInterface>(
+        'HealthCheckService',
+      );
+    this.authService =
+      this.authClient.getService<HealthCheckServiceInterface>(
+        'HealthCheckService',
+      );
   }
   async getHealtStatusProperties() {
     try {
