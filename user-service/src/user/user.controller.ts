@@ -2,6 +2,7 @@ import { Controller } from '@nestjs/common';
 import { GrpcMethod, RpcException } from '@nestjs/microservices';
 import { UserService } from './user.service';
 import { RegisterDto } from './dto/register.dto';
+import { error } from 'console';
 
 @Controller()
 export class UserController {
@@ -11,7 +12,10 @@ export class UserController {
   async FindUserById(data: { id: number }) {
     const user = await this.userService.findOneById(data.id);
     if (!user) {
-      throw new RpcException(`User with ID ${data.id} not found`);
+      return {
+        error: true,
+        message: `User with ID ${data.id} not found`,
+      };
     }
     return {
       id: user.id,
@@ -23,7 +27,10 @@ export class UserController {
   async FindUserByEmail(data: { email: string }) {
     const user = await this.userService.findOneByEmail(data.email);
     if (!user) {
-      throw new RpcException('User not found');
+      return {
+        error: true,
+        message: `User with email ${data.email} not found`,
+      };
     }
     return {
       id: user.id,
