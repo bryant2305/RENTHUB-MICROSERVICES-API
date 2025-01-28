@@ -59,3 +59,7 @@ Run redis-server.exe.
 
 💬 Let's Connect!
 Have questions or want to collaborate? Feel free to reach out to me on LinkedIn or email me at bryantperezgarcia005@gmail.com.
+
+<img width="733" alt="RENTHUBImg" src="https://github.com/user-attachments/assets/3a5f8ab2-6bd6-446d-91a0-dc1b4b02e950" />
+
+
