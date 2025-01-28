@@ -1,80 +1,61 @@
 🏡 RentHub API
 
-RentHub es una API con arquitectura de microservicios diseñada para probar y mostrar mis habilidades en el desarrollo de sistemas escalables y modernos utilizando microservicios. 🚀
+RentHub is an API with a microservices architecture designed to showcase my skills in building scalable and modern systems using microservices. 🚀
 
-🧑‍💻 Servicios
+🧑‍💻 Services
 
 1️⃣ Gateway
-
-El punto de entrada de toda la API, que se encarga de enrutar las solicitudes a los microservicios correspondientes y gestionar la comunicación entre ellos.
+The main entry point of the API, responsible for routing requests to the appropriate microservices and managing communication between them.
 
 2️⃣ Auth-Service
-
-Maneja toda la lógica de autenticación y autorización, incluyendo el registro de usuarios y la generación de tokens JWT para el acceso seguro a la plataforma.
+Handles authentication and authorization, including user registration and generating secure JWT tokens for platform access.
 
 3️⃣ User-Service
-
-Gestiona todo lo relacionado con los usuarios, desde la creación y obtención de datos hasta las actualizaciones de perfil.
+Manages all user-related operations, including creation, data retrieval, and profile updates.
 
 4️⃣ Property-Service
-
-Este servicio se encarga de gestionar las propiedades que los usuarios pueden alquilar. Aquí se almacenan todos los detalles sobre las propiedades.
+Handles the management of properties available for rent, storing all property-related details.
 
 5️⃣ Reservation-Service
+Responsible for managing property reservations, ensuring dates and availability are handled correctly.
 
-Responsable de gestionar las reservas de las propiedades. Asegura que las fechas y disponibilidades estén correctamente manejadas.
+6️⃣ Email-Service
+Manages email notifications for new users and reservation confirmations.
 
-6️⃣Email-Service
+⚙️ Technologies Used
 
- Responsable del envío de correos electrónicos a nuevos usuarios y al realizar reservas.
+Node.js with NestJS for each microservice
+gRPC for efficient communication between microservices
+MongoDB and MySQL for data storage
+Redis for caching and performance improvements
+JWT for secure authentication
+API documentation with Swagger
+📜 Key Features
 
-⚙️ Tecnologías Utilizadas
+Secure Authentication: User management with JWT to protect endpoints.
+Property Management: Add, update, and delete properties available for booking.
+Reservations: A reservation system that ensures availability and prevents date conflicts.
+Independent Microservices: Fully decoupled services for users, authentication, properties, and reservations, ensuring flexibility and scalability.
+🚀 Getting Started
 
-Node.js con NestJS para cada microservicio
+Prerequisites:
 
-gRPC para la comunicación eficiente entre microservicios
+Node.js and npm installed
+MongoDB and MySQL configured
+Redis installed for caching
+Clone the repository:
+git clone https://github.com/bryant2305/RENTHUB-MICROSERVICES-API.git
 
-MongoDB y MySQL para el almacenamiento de datos
+Install dependencies:
+cd renthub  
+npm install  
+Set up environment variables in .env.
 
-Redis para el almacenamiento en caché y la mejora del rendimiento
+Start all microservices:
 
-JWT para la autenticación segura
-
-Documentación API con Swagger.
-
-📜 Funcionalidades Clave
-
-Autenticación Segura: Gestión de usuarios con JWT para proteger los endpoints.
-
-Gestión de Propiedades: Añade, actualiza y elimina propiedades que los usuarios pueden reservar.
-
-Reservas: Sistema de reservas que garantiza la disponibilidad y evita conflictos de fechas.
-
-Microservicios Independientes: Los microservicios de usuarios, autenticación, propiedades y reservas están completamente desacoplados, lo que asegura flexibilidad y escalabilidad.
-
-
-🚀 Cómo empezar
-
-Prerrequisitos
-Node.js y npm instalados.
-MongoDB y MySQL configurados.
-Redis instalado para el cacheo.
-
-Clona el repositorio : https://github.com/bryant2305/RENTHUB-MICROSERVICES-API.git
-
-Instala las dependencias: 
-cd renthub
-npm install
-
-Configura las variables de entorno en .env.
-
-Inicia todos los microservicios:
-npm run start:dev
-
-inicia Redis-server.exe
+npm run start:dev  
+Start Redis:
+Run redis-server.exe.
 
 💬 Let's Connect!
-Have questions or want to collaborate? Reach out to me on LinkedIn or shoot me an email at bryantperezgarcia005@gmail.com
-
-<img width="733" alt="image" src="https://github.com/user-attachments/assets/f7ecd0f1-e942-480b-810d-3d5c79896d25">
-
+Have questions or want to collaborate? Feel free to reach out to me on LinkedIn or email me at bryantperezgarcia005@gmail.com.
