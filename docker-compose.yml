@@ -1,0 +1,143 @@
+version: '3.8'
+
+services:
+  # Servicio MySQL
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-service
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+    ports:
+      - "3306:3306"
+    networks:
+      - backend
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  # Servicio MongoDB
+  mongo:
+    image: mongo:latest
+    container_name: mongo-service
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${DB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "27017:27017"
+    networks:
+      - backend
+    volumes:
+      - mongo-data:/data/db
+
+  # Microservicio 1 (Service 1)
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    container_name: gateway
+    env_file:
+      - ./gateway/.env  # Cargar el archivo .env específico de este microservicio
+    ports:
+      - "3333:3333"
+    depends_on:
+      - mysql
+      - mongo
+    networks:
+      - backend
+
+  # Microservicio 2 (Service 2)
+  property:
+    build:
+      context: ./properties-service
+      dockerfile: Dockerfile
+    container_name: property
+    env_file:
+      - ./properties-service/.env  # Cargar el archivo .env específico de este microservicio
+    ports:
+      - "3003:3000"
+    depends_on:
+      - mysql
+      - mongo
+    networks:
+      - backend
+
+  # Microservicio 3 (Service 3)
+  reservation:
+    build:
+      context: ./reservation-service
+      dockerfile: Dockerfile
+    container_name: reservation
+    env_file:
+      - ./reservation-service/.env  # Cargar el archivo .env específico de este microservicio
+    ports:
+      - "3004:3000"
+    depends_on:
+      - mysql
+      - mongo
+    networks:
+      - backend
+
+  auth:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    container_name: auth
+    env_file:
+      - ./auth-service/.env  # Cargar el archivo .env específico de este microservicio
+    ports:
+      - "3010:3000"
+    depends_on:
+      - mysql
+      - mongo
+    networks:
+      - backend
+
+  user:
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
+    container_name: user
+    env_file:
+      - ./user-service/.env  # Cargar el archivo .env específico de este microservicio
+    ports:
+      - "3003:3000"
+    depends_on:
+      - mysql
+      - mongo
+    networks:
+      - backend
+
+  email:
+    build:
+      context: ./mail-service
+      dockerfile: Dockerfile
+    container_name: email
+    env_file:
+      - ./mail-service/.env  # Cargar el archivo .env específico de este microservicio
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mysql
+      - mongo
+    networks:
+      - backend
+
+      
+  # Servicio Redis
+  redis:
+    image: redis:alpine
+    container_name: redis-service
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    ports:
+      - "6379:6379"
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  mysql-data:
+  mongo-data:

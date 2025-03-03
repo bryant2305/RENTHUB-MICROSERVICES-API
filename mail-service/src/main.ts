@@ -15,10 +15,7 @@ async function bootstrap() {
     transport: Transport.GRPC,
     options: {
       package: 'email_proto',
-      protoPath: join(
-        __dirname,
-        '../../mail-service/src/shared/protos/email.proto',
-      ),
+      protoPath: join(__dirname, '../src/shared/protos/email.proto'),
       url: `${url}:${port}`,
     },
   });
