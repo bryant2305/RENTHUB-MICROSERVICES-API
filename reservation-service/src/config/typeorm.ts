@@ -20,6 +20,9 @@ const config = {
   cli: {
     migrationsDir: './dist/database/migrations/*.{ts,js}',
   },
+  extra: {
+    authPlugin: 'mysql_native_password',
+  },
   //   seeds: [InitSeeder],
 };
 

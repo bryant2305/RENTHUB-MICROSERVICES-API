@@ -15,10 +15,7 @@ async function bootstrap() {
     transport: Transport.GRPC,
     options: {
       package: 'auth_proto',
-      protoPath: join(
-        __dirname,
-        '../../auth-service/src/shared/protos/auth.proto',
-      ),
+      protoPath: join(__dirname, '../src/shared/protos/auth.proto'),
       url: `${url}:${port}`,
     },
   });
@@ -31,7 +28,7 @@ async function bootstrap() {
   );
 
   await app.startAllMicroservices();
-  await app.listen(port);
+  // await app.listen(port);
 }
 
 bootstrap();

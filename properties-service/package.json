@@ -17,7 +17,8 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "postbuild": "mkdir -p dist/src/shared && cp -r src/shared/protos dist/src/shared"
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.11.1",
@@ -29,6 +30,7 @@
     "@nestjs/microservices": "^10.4.1",
     "@nestjs/mongoose": "^10.0.10",
     "@nestjs/platform-express": "^10.0.0",
+    "class-validator": "^0.14.1",
     "mongoose": "^8.6.0",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1"
