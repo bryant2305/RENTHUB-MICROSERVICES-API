@@ -13,16 +13,13 @@ async function bootstrap() {
     transport: Transport.GRPC,
     options: {
       package: 'reservations_proto',
-      protoPath: join(
-        __dirname,
-        '../../reservation-service/src/shared/protos/reservations.proto',
-      ),
+      protoPath: join(__dirname, '../src/shared/protos/reservations.proto'),
       url: `${url}:${port}`,
     },
   });
 
   console.log('Starting App in Port: ', port);
-  await app.listen(port);
+  // await app.listen(port);
   await app.startAllMicroservices();
 }
 bootstrap();
