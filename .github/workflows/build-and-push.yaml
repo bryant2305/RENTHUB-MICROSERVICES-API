@@ -33,10 +33,12 @@ jobs:
       mail: ${{ steps.filter.outputs.mail }}
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - uses: dorny/paths-filter@v3
+      - name: Detect changed services
         id: filter
+        uses: dorny/paths-filter@v3
         with:
           filters: |
             gateway:
@@ -85,9 +87,11 @@ jobs:
             changed: ${{ needs.detect-changes.outputs.mail }}
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        if: matrix.changed == 'true'
+        uses: actions/checkout@v4
 
-      - name: Generate tags
+      - name: Generate short SHA
         if: matrix.changed == 'true'
         run: |
           SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-7)
@@ -101,7 +105,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and Push
+      - name: Build and Push Docker Image
         if: matrix.changed == 'true'
         uses: docker/build-push-action@v5
         with:
@@ -111,8 +115,9 @@ jobs:
             ghcr.io/${{ env.IMAGE_OWNER }}/${{ matrix.service }}:${{ env.SHORT_SHA }}
             ghcr.io/${{ env.IMAGE_OWNER }}/${{ matrix.service }}:latest
 
-      - name: Print image
+      - name: Print published image
         if: matrix.changed == 'true'
         run: |
           echo "Published:"
           echo "ghcr.io/${{ env.IMAGE_OWNER }}/${{ matrix.service }}:${{ env.SHORT_SHA }}"
+          echo "ghcr.io/${{ env.IMAGE_OWNER }}/${{ matrix.service }}:latest"
