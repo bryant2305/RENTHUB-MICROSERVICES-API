@@ -84,26 +84,25 @@ jobs:
             context: ./mail-service
             changed: ${{ needs.detect-changes.outputs.mail }}
 
-    if: matrix.changed == 'true'
-
     steps:
       - uses: actions/checkout@v4
 
+      - name: Generate tags
+        if: matrix.changed == 'true'
+        run: |
+          SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-7)
+          echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
+
       - name: Login to GHCR
+        if: matrix.changed == 'true'
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Generate tags
-        id: meta
-        run: |
-          SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-7)
-
-          echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
-
       - name: Build and Push
+        if: matrix.changed == 'true'
         uses: docker/build-push-action@v5
         with:
           context: ${{ matrix.context }}
@@ -113,6 +112,7 @@ jobs:
             ghcr.io/${{ env.IMAGE_OWNER }}/${{ matrix.service }}:latest
 
       - name: Print image
+        if: matrix.changed == 'true'
         run: |
           echo "Published:"
           echo "ghcr.io/${{ env.IMAGE_OWNER }}/${{ matrix.service }}:${{ env.SHORT_SHA }}"
