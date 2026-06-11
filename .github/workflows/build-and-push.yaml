@@ -11,6 +11,16 @@ on:
       - 'properties-service/**'
       - 'reservation-service/**'
       - 'mail-service/**'
+  pull_request:
+    branches:
+      - develop
+    paths:
+      - 'gateway/**'
+      - 'auth-service/**'
+      - 'user-service/**'
+      - 'properties-service/**'
+      - 'reservation-service/**'
+      - 'mail-service/**'
 
 permissions:
   contents: read
@@ -93,7 +103,7 @@ jobs:
           echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
 
       - name: Login to GHCR
-        if: matrix.changed == 'true'
+        if: matrix.changed == 'true' && github.event_name == 'push'
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -101,7 +111,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and Push
-        if: matrix.changed == 'true'
+        if: matrix.changed == 'true' && github.event_name == 'push'
         uses: docker/build-push-action@v5
         with:
           context: ${{ matrix.context }}
