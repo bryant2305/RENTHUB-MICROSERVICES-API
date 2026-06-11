@@ -1,0 +1,61 @@
+# =============================================================================
+# Docker Compose Override for GHCR Images
+#
+# This file allows you to use GHCR images instead of building locally.
+#
+# Usage:
+#   # Use local built images (default)
+#   docker-compose up
+#
+#   # Use GHCR images (production)
+#   docker-compose -f docker-compose.yml -f docker-compose.ghcr.yml up
+#
+# Before using this file, ensure you're authenticated:
+#   docker login ghcr.io
+#   # or
+#   gh auth login && docker ps  # Uses GitHub CLI for auth
+#
+# You can set specific tags via environment variables:
+#   GHCR_TAG=abc1234 docker-compose -f docker-compose.yml -f docker-compose.ghcr.yml up
+#   GHCR_TAG=latest docker-compose -f docker-compose.yml -f docker-compose.ghcr.yml up
+#   GHCR_TAG=dev-latest docker-compose -f docker-compose.yml -f docker-compose.ghcr.yml up
+# =============================================================================
+
+version: '3.8'
+
+services:
+  # Override gateway to use GHCR image
+  gateway:
+    image: ghcr.io/${GHCR_ORG:-your-org}/RENTHUB-MICROSERVICES-API/gateway:${GHCR_TAG:-latest}
+    build: null  # Don't build, use image instead
+    pull_policy: always  # Always pull latest version
+
+  # Override auth service to use GHCR image
+  auth:
+    image: ghcr.io/${GHCR_ORG:-your-org}/RENTHUB-MICROSERVICES-API/auth:${GHCR_TAG:-latest}
+    build: null
+    pull_policy: always
+
+  # Override user service to use GHCR image
+  user:
+    image: ghcr.io/${GHCR_ORG:-your-org}/RENTHUB-MICROSERVICES-API/user:${GHCR_TAG:-latest}
+    build: null
+    pull_policy: always
+
+  # Override property service to use GHCR image
+  property:
+    image: ghcr.io/${GHCR_ORG:-your-org}/RENTHUB-MICROSERVICES-API/property:${GHCR_TAG:-latest}
+    build: null
+    pull_policy: always
+
+  # Override reservation service to use GHCR image
+  reservation:
+    image: ghcr.io/${GHCR_ORG:-your-org}/RENTHUB-MICROSERVICES-API/reservation:${GHCR_TAG:-latest}
+    build: null
+    pull_policy: always
+
+  # Override email service to use GHCR image
+  email:
+    image: ghcr.io/${GHCR_ORG:-your-org}/RENTHUB-MICROSERVICES-API/mail:${GHCR_TAG:-latest}
+    build: null
+    pull_policy: always
