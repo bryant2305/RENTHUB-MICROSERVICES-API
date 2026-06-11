@@ -1,0 +1,29 @@
+# GitHub CODEOWNERS file
+# Controls who must review pull requests and deployments
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Global owners (required for all PRs)
+* @bryant-perez
+
+# Workflow changes require CI/CD team approval
+.github/workflows/ @bryant-perez @devops-team
+
+# Infrastructure code changes require DevOps approval
+terraform/ @devops-team
+helm/ @devops-team
+
+# Each service has specific owners (optional)
+gateway/ @gateway-team
+auth-service/ @auth-team
+user-service/ @user-team
+properties-service/ @properties-team
+reservation-service/ @reservation-team
+mail-service/ @mail-team
+
+# Docker and infrastructure critical
+Dockerfile @devops-team
+docker-compose.yml @devops-team
+package.json @devops-team
+
+# Critical configuration
+.github/ @devops-team @bryant-perez
