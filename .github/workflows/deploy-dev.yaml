@@ -1,4 +1,4 @@
-name: Deploy to Development (Auto)
+name: Build and Push Docker Images to GHCR
 
 on:
   push:
@@ -12,95 +12,112 @@ on:
       - 'reservation-service/**'
       - 'mail-service/**'
 
-# This workflow automatically updates the K8s infrastructure repo
-# Which then triggers ArgoCD to deploy to dev cluster
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_OWNER: ${{ github.repository_owner }}
 
 jobs:
-  build-and-notify:
+  detect-changes:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      
-      - name: Determine changed services
-        id: changed
-        run: |
-          CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }})
-          
-          # Simple approach: for dev, always use latest
-          echo "This triggered from branch: ${{ github.ref }}"
-          echo "Changed files:"
-          echo "$CHANGED"
-      
-      - name: Get commit info
-        id: commit
-        run: |
-          echo "sha=${{ github.sha }}" >> $GITHUB_OUTPUT
-          echo "short_sha=${GITHUB_SHA:0:7}" >> $GITHUB_OUTPUT
-          echo "message=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
-      
-      # Option 1: Update the infrastructure repo directly
-      # (Less recommended - infrastructure repo should own its deployments)
-      - name: Update infrastructure repo with new image tags
-        uses: peter-evans/repository-dispatch@v2
-        with:
-          token: ${{ secrets.INFRASTRUCTURE_REPO_TOKEN }}  # Personal access token
-          repository: ${{ secrets.INFRASTRUCTURE_REPO }}   # e.g., my-company/renthub-infrastructure
-          event-type: update-dev-images
-          client-payload: |
-            {
-              "image_tag": "${{ steps.commit.outputs.short_sha }}",
-              "services": "all",
-              "commit_message": "${{ steps.commit.outputs.message }}"
-            }
-      
-      # Option 2: Commit directly to infrastructure repo (even less recommended)
-      # This allows this repo to update values-dev.yaml in the K8s repo
-      - name: Clone and update infrastructure repo
-        if: false  # Disabled - use Option 1 instead
-        run: |
-          git clone https://oauth2:${{ secrets.INFRASTRUCTURE_REPO_TOKEN }}@github.com/${{ secrets.INFRASTRUCTURE_REPO }}.git infra-repo
-          cd infra-repo
-          
-          # Update values-dev.yaml with new image tag
-          sed -i "s|tag: .*|tag: ${{ steps.commit.outputs.short_sha }}|" helm/renthub-chart/values-dev.yaml
-          
-          git config user.email "ci-bot@renthub.dev"
-          git config user.name "CI Bot"
-          git add helm/renthub-chart/values-dev.yaml
-          git commit -m "chore: update dev image tag to ${{ steps.commit.outputs.short_sha }}"
-          git push origin main
-      
-      # Option 3: Trigger ArgoCD directly
-      # If using ArgoCD, you can refresh the app directly
-      - name: Trigger ArgoCD sync (optional)
-        if: false  # Only if you have ArgoCD running
-        run: |
-          curl -X POST https://argocd.example.com/api/v1/applications/renthub-dev/sync \
-            -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -d '{}'
 
-  notify-slack:
-    runs-on: ubuntu-latest
-    needs: build-and-notify
-    if: always()
+    outputs:
+      gateway: ${{ steps.filter.outputs.gateway }}
+      auth: ${{ steps.filter.outputs.auth }}
+      user: ${{ steps.filter.outputs.user }}
+      property: ${{ steps.filter.outputs.property }}
+      reservation: ${{ steps.filter.outputs.reservation }}
+      mail: ${{ steps.filter.outputs.mail }}
+
     steps:
-      - name: Notify deployment triggered
-        uses: slackapi/slack-github-action@v1.24.0
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Detect changed services
+        id: filter
+        uses: dorny/paths-filter@v3
         with:
-          webhook-url: ${{ secrets.SLACK_WEBHOOK }}
-          payload: |
-            {
-              "text": "🚀 Dev deployment triggered",
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Dev Deployment Triggered*\nAuthor: ${{ github.actor }}\nCommit: ${{ github.sha }}"
-                  }
-                }
-              ]
-            }
+          filters: |
+            gateway:
+              - 'gateway/**'
+            auth:
+              - 'auth-service/**'
+            user:
+              - 'user-service/**'
+            property:
+              - 'properties-service/**'
+            reservation:
+              - 'reservation-service/**'
+            mail:
+              - 'mail-service/**'
+
+  build:
+    needs: detect-changes
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - service: gateway
+            context: ./gateway
+            changed: ${{ needs.detect-changes.outputs.gateway }}
+
+          - service: auth
+            context: ./auth-service
+            changed: ${{ needs.detect-changes.outputs.auth }}
+
+          - service: user
+            context: ./user-service
+            changed: ${{ needs.detect-changes.outputs.user }}
+
+          - service: property
+            context: ./properties-service
+            changed: ${{ needs.detect-changes.outputs.property }}
+
+          - service: reservation
+            context: ./reservation-service
+            changed: ${{ needs.detect-changes.outputs.reservation }}
+
+          - service: mail
+            context: ./mail-service
+            changed: ${{ needs.detect-changes.outputs.mail }}
+
+    steps:
+      - name: Checkout code
+        if: matrix.changed == 'true'
+        uses: actions/checkout@v4
+
+      - name: Generate short SHA
+        if: matrix.changed == 'true'
+        run: |
+          SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-7)
+          echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
+
+      - name: Login to GHCR
+        if: matrix.changed == 'true'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push Docker Image
+        if: matrix.changed == 'true'
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ matrix.context }}
+          push: true
+          tags: |
+            ghcr.io/${{ env.IMAGE_OWNER }}/${{ matrix.service }}:${{ env.SHORT_SHA }}
+            ghcr.io/${{ env.IMAGE_OWNER }}/${{ matrix.service }}:latest
+
+      - name: Print published image
+        if: matrix.changed == 'true'
+        run: |
+          echo "Published:"
+          echo "ghcr.io/${{ env.IMAGE_OWNER }}/${{ matrix.service }}:${{ env.SHORT_SHA }}"
+          echo "ghcr.io/${{ env.IMAGE_OWNER }}/${{ matrix.service }}:latest"
