@@ -1,6 +1,6 @@
 # Production Deployment Architecture Guide
 
-## 🏗️ The Complete Picture
+## The Complete Picture
 
 You now have a **production-grade CI/CD pipeline** that follows industry best practices. Here's how everything connects:
 
