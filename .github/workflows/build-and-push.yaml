@@ -1,4 +1,4 @@
-name: Build and Push Docker Images to GHCR
+name: GHCR Build and Push
 
 on:
   push:
@@ -88,7 +88,6 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Generate tags
-        if: matrix.changed == 'true'
         run: |
           SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-7)
           echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
