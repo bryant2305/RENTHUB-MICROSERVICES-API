@@ -13,10 +13,18 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private readonly configService: ConfigService,
     private readonly userService: UserService,
   ) {
+    const jwtSecret = configService.get<string>('JWT_SECRET_KEY');
+    
+    if (!jwtSecret) {
+      throw new Error(
+        'JWT_SECRET_KEY environment variable is not defined. Please check your .env file.',
+      );
+    }
+
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: configService.get<string>('JWT_SECRET_KEY'),
+      secretOrKey: jwtSecret,
     });
   }
 

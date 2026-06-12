@@ -12,13 +12,17 @@ import * as redisStore from 'cache-manager-ioredis';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, cache: true }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      cache: true,
+      envFilePath: '.env',
+    }),
     CacheModule.register({
       store: redisStore,
-      host: process.env.REDIS_HOST, // Cambia a la URL de tu servidor Redis si no es local
+      host: process.env.REDIS_HOST,
       port: process.env.REDIS_PORT,
       ttl: 60,
-      isGlobal: true, // Tiempo en segundos para cachear (60 segundos en este caso)
+      isGlobal: true,
     }),
     AuthModule,
     UserModule,
