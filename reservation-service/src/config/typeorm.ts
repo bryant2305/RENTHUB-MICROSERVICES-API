@@ -23,6 +23,8 @@ const config = {
   extra: {
     authPlugin: 'mysql_native_password',
   },
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  driver: require('mysql2'),
   //   seeds: [InitSeeder],
 };
 
