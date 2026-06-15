@@ -21,6 +21,7 @@ const config = {
     migrationsDir: './dist/database/migrations/*.{ts,js}',
   },
   // seeds: [InitSeeder],
+  driver: require('mysql2'),
 };
 
 export default registerAs('typeorm', () => config);
