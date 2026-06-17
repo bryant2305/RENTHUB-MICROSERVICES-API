@@ -7,6 +7,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
+import { Observable, throwError } from 'rxjs'; // 1. ADD THIS IMPORT
 
 /**
  * HttpToRpcExceptionFilter
@@ -20,7 +21,8 @@ export class HttpToRpcExceptionFilter
 {
   private readonly logger = new Logger(HttpToRpcExceptionFilter.name);
 
-  catch(exception: HttpException, host: ArgumentsHost) {
+  // 2. ADD THE OBSERVABLE RETURN TYPE HERE
+  catch(exception: HttpException, host: ArgumentsHost): Observable<any> {
     const status = exception.getStatus();
     const exceptionResponse = exception.getResponse();
 
@@ -51,7 +53,8 @@ export class HttpToRpcExceptionFilter
       statusCode: status,
     });
 
-    throw rpcException;
+    // 3. RETURN throwError INSTEAD OF throw
+    return throwError(() => rpcException);
   }
 
   /**
