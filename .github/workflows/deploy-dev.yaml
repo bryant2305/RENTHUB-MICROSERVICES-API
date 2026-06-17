@@ -131,3 +131,32 @@ jobs:
           echo "Published:"
           echo "ghcr.io/${{ env.IMAGE_OWNER }}/${{ matrix.service }}:${{ env.SHORT_SHA }}"
           echo "ghcr.io/${{ env.IMAGE_OWNER }}/${{ matrix.service }}:latest"
+
+      # --- NEW GITOPS DEPLOYMENT STEPS ---
+      - name: Checkout Infrastructure Repository
+        if: matrix.changed == 'true' && github.event_name == 'push'
+        uses: actions/checkout@v4
+        with:
+          repository: bryant2305/dep
+          token: ${{ secrets.INFRA_REPO_PAT }}
+          path: infra-repo
+
+      - name: Update Helm Values with new Image Tag
+        if: matrix.changed == 'true' && github.event_name == 'push'
+        run: |
+          cd infra-repo
+          
+          # Use yq to update the image string in values.yaml
+          yq e ".services.${{ matrix.service }}.image = \"ghcr.io/${{ env.IMAGE_OWNER }}/${{ matrix.service }}:${{ env.SHORT_SHA }}\"" -i helm/renthub-chart/values.yaml
+          
+          # Set up Git user for commit
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+          
+          # Commit and push the changes
+          git add helm/renthub-chart/values.yaml
+          # We use git commit || true so the pipeline doesn't fail if the image tag is exactly the same
+          git commit -m "chore: update ${{ matrix.service }} image to ${{ env.SHORT_SHA }}" || true
+          
+          # IMPORTANT: Make sure 'main' matches the default branch in your 'dep' repo
+          git push origin main
