@@ -12,7 +12,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .addBearerAuth()
     .setTitle('RENT-HUB API')
-    .setDescription('Api for Properties Rentals.')
+    .setDescription('Api for Properties Rentals!')
     .setVersion('1.0')
     .build();
   app.setGlobalPrefix('api');
