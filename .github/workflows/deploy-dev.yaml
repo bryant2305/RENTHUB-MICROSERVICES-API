@@ -146,15 +146,15 @@ jobs:
         run: |
           cd infra-repo
           
-          # Use yq to update the image string in values.yaml
-          yq e ".services.${{ matrix.service }}.image = \"ghcr.io/${{ env.IMAGE_OWNER }}/${{ matrix.service }}:${{ env.SHORT_SHA }}\"" -i helm/renthub-chart/values.yaml
+          # Use yq to update the image string in values-dev.yaml
+          yq e ".services.${{ matrix.service }}.image = \"ghcr.io/${{ env.IMAGE_OWNER }}/${{ matrix.service }}:${{ env.SHORT_SHA }}\"" -i helm/renthub-chart/values-dev.yaml
           
           # Set up Git user for commit
           git config user.name "GitHub Actions Bot"
           git config user.email "actions@github.com"
           
           # Commit and push the changes
-          git add helm/renthub-chart/values.yaml
+          git add helm/renthub-chart/values-dev.yaml
           # We use git commit || true so the pipeline doesn't fail if the image tag is exactly the same
           git commit -m "chore: update ${{ matrix.service }} image to ${{ env.SHORT_SHA }}" || true
           
