@@ -12,11 +12,11 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .addBearerAuth()
     .setTitle('RENT-HUB API')
-    .setDescription('Api for properties rentals')
+    .setDescription('Api for Properties Rentals')
     .setVersion('1.0')
     .build();
   app.setGlobalPrefix('api');
-  
+
   // Apply gateway-specific RPC exception filter to translate gRPC errors back to HTTP
   app.useGlobalFilters(new GatewayRpcExceptionFilter());
 
