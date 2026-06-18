@@ -6,6 +6,7 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { join } from 'path';
 import { RpcException } from '@nestjs/microservices';
 import { HttpToRpcExceptionFilter } from './common/filters/http-to-rpc-exception.filter';
+import { DataSource } from 'typeorm';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,6 +14,19 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const port = configService.get<number>('APP_PORT', 3001);
   const url = configService.get<number>('URL');
+
+  // Run migrations in production
+  if (process.env.NODE_ENV === 'production') {
+    try {
+      const dataSource = app.get(DataSource);
+      Logger.log('Running database migrations...');
+      await dataSource.runMigrations();
+      Logger.log('Database migrations completed successfully ✅');
+    } catch (error) {
+      Logger.error('Failed to run migrations', error);
+      throw error;
+    }
+  }
 
   app.connectMicroservice<GrpcOptions>({
     transport: Transport.GRPC,

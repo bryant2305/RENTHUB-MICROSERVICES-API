@@ -20,6 +20,7 @@ const config = {
   cli: {
     migrationsDir: './dist/database/migrations/*.{ts,js}',
   },
+  connectorPackage: 'mysql2',
   extra: {
     authPlugin: 'mysql_native_password',
   },
