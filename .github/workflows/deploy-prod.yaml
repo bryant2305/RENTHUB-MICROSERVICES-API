@@ -1,9 +1,9 @@
-name: Deploy Dev - Build and Push
+name: Deploy Prod - Build and Push
 
 on:
   push:
     branches:
-      - develop
+      - main
     paths:
       - 'gateway/**'
       - 'auth-service/**'
@@ -13,7 +13,7 @@ on:
       - 'mail-service/**'
   pull_request:
     branches:
-      - develop
+      - main
     paths:
       - 'gateway/**'
       - 'auth-service/**'
@@ -33,7 +33,6 @@ env:
 jobs:
   detect-changes:
     runs-on: ubuntu-latest
-
     outputs:
       gateway: ${{ steps.filter.outputs.gateway }}
       auth: ${{ steps.filter.outputs.auth }}
@@ -41,6 +40,8 @@ jobs:
       property: ${{ steps.filter.outputs.property }}
       reservation: ${{ steps.filter.outputs.reservation }}
       mail: ${{ steps.filter.outputs.mail }}
+      # Variable para saber si al menos un servicio cambió y evitar levantar el matrix completo en vano
+      any_changed: ${{ steps.filter.outputs.gateway == 'true' || steps.filter.outputs.auth == 'true' || steps.filter.outputs.user == 'true' || steps.filter.outputs.property == 'true' || steps.filter.outputs.reservation == 'true' || steps.filter.outputs.mail == 'true' }}
 
     steps:
       - name: Checkout code
@@ -66,8 +67,8 @@ jobs:
 
   build:
     needs: detect-changes
+    if: needs.detect-changes.outputs.any_changed == 'true'
     runs-on: ubuntu-latest
-
     strategy:
       fail-fast: false
       matrix:
@@ -75,23 +76,18 @@ jobs:
           - service: gateway
             context: ./gateway
             changed: ${{ needs.detect-changes.outputs.gateway }}
-
           - service: auth
             context: ./auth-service
             changed: ${{ needs.detect-changes.outputs.auth }}
-
           - service: user
             context: ./user-service
             changed: ${{ needs.detect-changes.outputs.user }}
-
           - service: property
             context: ./properties-service
             changed: ${{ needs.detect-changes.outputs.property }}
-
           - service: reservation
             context: ./reservation-service
             changed: ${{ needs.detect-changes.outputs.reservation }}
-
           - service: mail
             context: ./mail-service
             changed: ${{ needs.detect-changes.outputs.mail }}
@@ -103,6 +99,7 @@ jobs:
 
       - name: Generate short SHA
         if: matrix.changed == 'true'
+        id: sha
         run: |
           SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-7)
           echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
@@ -122,41 +119,59 @@ jobs:
           context: ${{ matrix.context }}
           push: true
           tags: |
-            ghcr.io/${{ env.IMAGE_OWNER }}/${{ matrix.service }}:${{ env.SHORT_SHA }}
-            ghcr.io/${{ env.IMAGE_OWNER }}/${{ matrix.service }}:latest
+            ghcr.io/${{ env.IMAGE_OWNER }}/${{ matrix.service }}:${{ env.SHORT_SHA }}-prod
+            ghcr.io/${{ env.IMAGE_OWNER }}/${{ matrix.service }}:prod
 
-      - name: Print published image
-        if: matrix.changed == 'true'
+  deploy:
+    needs: [detect-changes, build]
+    if: github.event_name == 'push' && needs.detect-changes.outputs.any_changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate short SHA
         run: |
-          echo "Published:"
-          echo "ghcr.io/${{ env.IMAGE_OWNER }}/${{ matrix.service }}:${{ env.SHORT_SHA }}"
-          echo "ghcr.io/${{ env.IMAGE_OWNER }}/${{ matrix.service }}:latest"
+          SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-7)
+          echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
 
-      # --- NEW GITOPS DEPLOYMENT STEPS ---
       - name: Checkout Infrastructure Repository
-        if: matrix.changed == 'true' && github.event_name == 'push'
         uses: actions/checkout@v4
         with:
           repository: bryant2305/dep
           token: ${{ secrets.INFRA_REPO_PAT }}
           path: infra-repo
 
-      - name: Update Helm Values with new Image Tag
-        if: matrix.changed == 'true' && github.event_name == 'push'
+      - name: Update Helm Values with new Image Tags
         run: |
           cd infra-repo
           
-          # Use yq to update the image string in values-dev.yaml
-          yq e ".services.${{ matrix.service }}.image = \"ghcr.io/${{ env.IMAGE_OWNER }}/${{ matrix.service }}:${{ env.SHORT_SHA }}\"" -i helm/renthub-chart/values-dev.yaml
+          # Se actualizan secuencialmente solo los servicios que cambiaron
+          if [ "${{ needs.detect-changes.outputs.gateway }}" = "true" ]; then
+            yq e ".services.gateway.image = \"ghcr.io/${{ env.IMAGE_OWNER }}/gateway:${{ env.SHORT_SHA }}-prod\"" -i helm/renthub-chart/values-prod.yaml
+          fi
           
-          # Set up Git user for commit
+          if [ "${{ needs.detect-changes.outputs.auth }}" = "true" ]; then
+            yq e ".services.auth.image = \"ghcr.io/${{ env.IMAGE_OWNER }}/auth:${{ env.SHORT_SHA }}-prod\"" -i helm/renthub-chart/values-prod.yaml
+          fi
+          
+          if [ "${{ needs.detect-changes.outputs.user }}" = "true" ]; then
+            yq e ".services.user.image = \"ghcr.io/${{ env.IMAGE_OWNER }}/user:${{ env.SHORT_SHA }}-prod\"" -i helm/renthub-chart/values-prod.yaml
+          fi
+          
+          if [ "${{ needs.detect-changes.outputs.property }}" = "true" ]; then
+            yq e ".services.property.image = \"ghcr.io/${{ env.IMAGE_OWNER }}/property:${{ env.SHORT_SHA }}-prod\"" -i helm/renthub-chart/values-prod.yaml
+          fi
+          
+          if [ "${{ needs.detect-changes.outputs.reservation }}" = "true" ]; then
+            yq e ".services.reservation.image = \"ghcr.io/${{ env.IMAGE_OWNER }}/reservation:${{ env.SHORT_SHA }}-prod\"" -i helm/renthub-chart/values-prod.yaml
+          fi
+          
+          if [ "${{ needs.detect-changes.outputs.mail }}" = "true" ]; then
+            yq e ".services.mail.image = \"ghcr.io/${{ env.IMAGE_OWNER }}/mail:${{ env.SHORT_SHA }}-prod\"" -i helm/renthub-chart/values-prod.yaml
+          fi
+
+          # Configurar Git y hacer Push único
           git config user.name "GitHub Actions Bot"
           git config user.email "actions@github.com"
           
-          # Commit and push the changes
-          git add helm/renthub-chart/values-dev.yaml
-          # We use git commit || true so the pipeline doesn't fail if the image tag is exactly the same
-          git commit -m "chore: update ${{ matrix.service }} image to ${{ env.SHORT_SHA }}" || true
-          
-          # IMPORTANT: Make sure 'main' matches the default branch in your 'dep' repo
+          git add helm/renthub-chart/values-prod.yaml
+          git commit -m "chore: update deployed services images to ${{ env.SHORT_SHA }}-prod" || true
           git push origin main
