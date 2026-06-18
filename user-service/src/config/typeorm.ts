@@ -20,6 +20,7 @@ const config = {
   cli: {
     migrationsDir: './dist/database/migrations/*.{ts,js}',
   },
+  connectorPackage: 'mysql2',
   // seeds: [InitSeeder],
   driver: require('mysql2'),
 };
